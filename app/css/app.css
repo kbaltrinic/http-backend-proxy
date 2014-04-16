@@ -1,0 +1,37 @@
+.form {
+  border: solid 1px silver;
+  margin: 5px;
+  padding: 5px;
+}
+
+.request{
+  position: relative;
+  padding-top: 25px;
+  margin-bottom: 25px;
+}
+.request:after {
+  content: "Request";
+  position: absolute;
+  top: 3px;
+  left: 1px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #bbb;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.response{
+  position: relative;
+  padding-top: 25px;
+}
+.response:after {
+  content: "Response";
+  position: absolute;
+  top: 3px;
+  left: 1px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #bbb;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}

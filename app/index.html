@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en" ng-app="app" ng-controller="appCtrl">
+<head>
+  <meta charset="utf-8">
+  <title>Ken Baltrinic's ngMockE2E Protractor-Controllable Decorator</title>
+  <link rel="stylesheet" href="css/bootstrap.css"/>
+  <link rel="stylesheet" href="css/app.css"/>
+</head>
+<body>
+  <div class="form">
+    <div class="request">
+      <form role="form">
+        <div class="form-group">
+          <label for="method">HTTP Verb:</label>
+            <input type="text"
+              class="form-control"
+              id="method"
+              placeholder="GET|HEAD|POST|PUT|DELETE"
+              ng-model="request.method" />
+        </div>
+        <div class="form-group">
+          <label for="url">URL:</label>
+          <div class="input-group">
+            <span class="input-group-addon">/</span>
+            <input type="text"
+              class="form-control"
+              id="url"
+              placeholder="api/some-endpoint?query=some%20query"
+              ng-model="request.url" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="headers">Headers:</label>
+          <textarea type="text"
+            class="form-control"
+            id="headers"
+            placeholder="header: value (one header per line)"
+            ng-model="request.headers" >
+          </textarea>
+        </div>
+        <div class="form-group">
+          <label for="data">Body:</label>
+          <textarea type="text"
+            class="form-control"
+            id="data"
+            placeholder="could be JSON, url-encoded form data, etc."
+            ng-model="request.data" >
+          </textarea>
+        </div>
+        <input id="call" type="button" ng-click="call()" value="Make Call" class="btn btn-primary"/>
+      </form>
+    </div>
+    <div class="response" ng-cloak ng-show="response">
+      <form role="form" class="form-inline">
+        <div class="form-group">
+          <label for="r-status">Status:</label>
+          <span id="r-status" class="form-control-static">{{response.status}}</span>
+        </div>
+      </form>
+      <div class="row">
+        <div class="col-md-6">
+          <form>
+            <div class="form-group">
+              <label for="r-data">Data:</label>
+              <pre id="r-data" class="form-control-static">{{response.data}}</pre>
+            </div>
+          </form>
+        </div>
+        <div class="col-md-6">
+          <form>
+            <div class="form-group">
+              <label for="r-headers">Headers:</label>
+              <pre id="r-headers" class="form-control-static">{{response.headers}}</pre>
+            </div>
+          </form>
+        </div>
+      </div>
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" id="pretty-print" ng-model="prettyPrint"> Pretty Print output.
+      </label>
+    </div>
+  </div>
+  </div>
+  <script src="../bower_components/angular/angular.js"></script>
+  <script src="../bower_components/angular-mocks/angular-mocks.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
