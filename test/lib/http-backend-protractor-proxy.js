@@ -1,3 +1,8 @@
+/**
+ * http-backend-protractor-proxy - https://github.com/kbaltrinic/http-backend-protractor-proxy
+ * (c) 2014 Kenneth Baltrinic. http://www.baltrinic.com
+ * License: MIT
+ */
 'use strict';
 
 module.exports = function(browser){
