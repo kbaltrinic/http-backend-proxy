@@ -10,7 +10,12 @@ module.exports = function(browser){
   function stringifyArgs(args){
     var i, s = [];
     for(i = 0; i < args.length; i++){
-      s.push(JSON.stringify(args[i]));
+
+      var stringified = typeof args[i] === 'function'
+        ? args[i].toString()
+        : JSON.stringify(args[i]);
+
+      s.push(stringified);
     }
     return s.join(', ');
   }

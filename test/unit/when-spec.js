@@ -100,7 +100,7 @@ describe('Proxy.when JavaScript generation', function(){
 	it('should generate correct JavaScript for calls with complex json arguments', function () {
 
 		var json = {
-		  string: "string",
+		  string: "abc",
 		  number: 290,
 		  obj: {
 		    nested: "object"
@@ -109,11 +109,19 @@ describe('Proxy.when JavaScript generation', function(){
 		  null: null
 		};
 
-		var stringified = '{"string":"string","number":290,"obj":{"nested":"object"},"array":[232,"ABC",null,{}],"null":null}';
+		var stringified = '{"string":"abc","number":290,"obj":{"nested":"object"},"array":[232,"ABC",null,{}],"null":null}';
 
 		proxy.when('GET', '/endpoint', json).respond(200, json);
 		expect(browser.executeScript).toHaveBeenCalledWith(
 			'window.$httpBackend.when("GET", "/endpoint", ' + stringified + ').respond(200, ' + stringified + ');');
+
+	});
+
+	it('should generate correct JavaScript for calls with anonymous functions', function () {
+
+		proxy.when('GET', function(url){return url.indexOf('/home') == 0;}).respond(function(method, url, data, headers){ return [200, 'you callded ' + url];});
+		expect(browser.executeScript).toHaveBeenCalledWith(
+			'window.$httpBackend.when("GET", function (url){return url.indexOf(\'/home\') == 0;}).respond(function (method, url, data, headers){ return [200, \'you callded \' + url];});');
 
 	});
 });
