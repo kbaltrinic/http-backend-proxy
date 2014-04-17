@@ -60,6 +60,10 @@ angular.module('app', [
 	};
 
 }]).run(function($httpBackend) {
+
+	//Must expose this so that it is accessible to remotely invoked javascript.
+	window.$httpBackend = $httpBackend
+
     $httpBackend.whenGET('/test').respond(
     	200, {
     	msg: "You called /test",
