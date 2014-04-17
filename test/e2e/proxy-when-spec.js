@@ -9,6 +9,19 @@ var HttpBackend = require('../lib/http-backend-protractor-proxy');
 
 describe('Remote configuration behavior', function(){
 
+  var angularVersion;
+  var firstRun0 = true;
+
+  if(firstRun0){
+    firstRun0 = false;
+
+    browser.get('index.html');
+    element(by.id('version')).getText().then(function(version){
+      angularVersion = JSON.parse(version);
+      console.log("Angular version: " + version);
+    });
+  }
+
   describe('Basic remotely configured GET call', function() {
 
     var httpBackend;

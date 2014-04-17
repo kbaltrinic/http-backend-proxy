@@ -6,6 +6,8 @@ angular.module('app', [
   'ngMockE2E'
 ]).controller('appCtrl', ['$scope', '$http', function($scope, $http) {
 
+	$scope.version = angular.version;
+
 	$scope.prettyPrint || ($scope.prettyPrint = false);
 
 	$scope.request || ($scope.request = { method: '', url: '', headers: '', data: ''});
