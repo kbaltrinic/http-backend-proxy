@@ -124,4 +124,14 @@ describe('Proxy.when JavaScript generation', function(){
 			'window.$httpBackend.when("GET", function (url){return url.indexOf(\'/home\') == 0;}).respond(function (method, url, data, headers){ return [200, \'you callded \' + url];});');
 
 	});
+
+
+	it('should generate correct JavaScript for calls with regular expressions functions', function () {
+
+		proxy.when('GET', /\/db/g ).passThrough();
+		expect(browser.executeScript).toHaveBeenCalledWith(
+			'window.$httpBackend.when("GET", /\\/db/g).passThrough();');
+
+	});
+
 });

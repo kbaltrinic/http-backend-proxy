@@ -11,7 +11,7 @@ module.exports = function(browser){
     var i, s = [];
     for(i = 0; i < args.length; i++){
 
-      var stringified = typeof args[i] === 'function'
+      var stringified = ( typeof args[i] === 'function' || args[i] instanceof RegExp )
         ? args[i].toString()
         : JSON.stringify(args[i]);
 
