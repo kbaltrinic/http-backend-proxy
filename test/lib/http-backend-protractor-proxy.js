@@ -20,20 +20,32 @@ module.exports = function(browser){
     return s.join(', ');
   }
 
-  this.when = function(){
+  function createMethods(proxy, prefix, functionBuilder) {
+    ['', 'GET', 'PUT', 'HEAD', 'POST', 'DELETE', 'PATCH', 'JSONP'].forEach(function(method) {
+     proxy[prefix + method] = functionBuilder(prefix + method);
+    });
+  }
 
-    var whenJS = 'window.$httpBackend.when(' + stringifyArgs(arguments) + ')';
+  createMethods(this, 'when', buildWhenFunction);
 
-    return {
-      respond: function() {
+  function buildWhenFunction(funcName){
 
-        var fullJS = whenJS +'.respond(' + stringifyArgs(arguments) + ');'
+    return function(){
 
-        return browser.executeScript(fullJS);
-      },
-      passThrough: function() {
-        return browser.executeScript(whenJS +'.passThrough(' + stringifyArgs(arguments) + ');');
-      }
+      var whenJS = 'window.$httpBackend.' + funcName + '(' + stringifyArgs(arguments) + ')';
+
+      return {
+        respond: function() {
+
+          var fullJS = whenJS +'.respond(' + stringifyArgs(arguments) + ');'
+
+          return browser.executeScript(fullJS);
+        },
+        passThrough: function() {
+          return browser.executeScript(whenJS +'.passThrough(' + stringifyArgs(arguments) + ');');
+        }
+      };
+
     };
 
   };
