@@ -10,6 +10,7 @@ var HttpBackend = require('../lib/http-backend-protractor-proxy');
 describe('Remote configuration behavior', function(){
 
   var angularVersion;
+  var urlSelectorFunctionsSupported;
   var firstRun0 = true;
 
   if(firstRun0){
@@ -19,6 +20,7 @@ describe('Remote configuration behavior', function(){
     element(by.id('version')).getText().then(function(version){
       angularVersion = JSON.parse(version);
       console.log("Angular version: " + version);
+      urlSelectorFunctionsSupported = angularVersion.major > 1 || angularVersion.minor > 2;
     });
   }
 
@@ -110,6 +112,50 @@ describe('Remote configuration behavior', function(){
 
       expect(element(by.id('r-headers')).getText())
         .toEqual('{}');
+
+    });
+
+  });
+
+  describe('Remotely configured GET call that uses functions', function() {
+
+    var httpBackend;
+    var firstRun = true;
+
+    beforeEach(function() {
+
+      if(firstRun){
+        firstRun = false;
+
+        browser.get('index.html');
+
+        httpBackend = new HttpBackend(browser);
+
+        var urlSelector = urlSelectorFunctionsSupported
+          ? function(url){return url.indexOf('/func') == 0;}
+          : '/func-test';
+
+        httpBackend.when('GET', urlSelector)
+          .respond(function(method, url){return [200, 'You called: ' + url];});
+
+        element(by.id('method')).sendKeys('GET');
+        element(by.id('url')).sendKeys('func-test');
+        element(by.id('call')).click();
+
+      }
+
+    });
+
+    it('should result in a response status of 200', function() {
+
+      expect(element(by.id('r-status')).getText()).toEqual('200');
+
+    });
+
+    it('should result in the computed response body being displayed', function() {
+
+      expect(element(by.id('r-data')).getText())
+        .toEqual('"You called: /func-test"');
 
     });
 
