@@ -6,13 +6,19 @@ describe('Default ngMockE2E Behavior', function() {
 
   describe('Basic GET call', function() {
 
+    var firstRun = true;
+
     beforeEach(function() {
 
-      browser.get('index.html');
+      if(firstRun){
+        firstRun = false;
 
-      element(by.id('method')).sendKeys('GET');
-      element(by.id('url')).sendKeys('test');
-      element(by.id('call')).click();
+        browser.get('index.html');
+
+        element(by.id('method')).sendKeys('GET');
+        element(by.id('url')).sendKeys('test');
+        element(by.id('call')).click();
+      }
 
     });
 
@@ -40,13 +46,20 @@ describe('Default ngMockE2E Behavior', function() {
 
   describe('Basic GET call returning an error', function() {
 
+    var firstRun = true;
+
     beforeEach(function() {
 
-      browser.get('index.html');
+      if(firstRun){
+        firstRun = false;
 
-      element(by.id('method')).sendKeys('GET');
-      element(by.id('url')).sendKeys('missing');
-      element(by.id('call')).click();
+        browser.get('index.html');
+
+        element(by.id('method')).sendKeys('GET');
+        element(by.id('url')).sendKeys('missing');
+        element(by.id('call')).click();
+
+      }
 
     });
 
@@ -79,19 +92,25 @@ describe('Remote configuration behavior', function(){
   describe('Basic remotely configured GET call', function() {
 
     var httpBackend;
+    var firstRun = true;
 
     beforeEach(function() {
 
-      browser.get('index.html');
+      if(firstRun){
+        firstRun = false;
 
-      httpBackend = new HttpBackend(browser);
-      httpBackend.when('GET', '/remote').respond(200, {
-        msg: "You called /remote",
-      }, {'test-header': 'remote success'});
+        browser.get('index.html');
 
-      element(by.id('method')).sendKeys('GET');
-      element(by.id('url')).sendKeys('remote');
-      element(by.id('call')).click();
+        httpBackend = new HttpBackend(browser);
+        httpBackend.when('GET', '/remote').respond(200, {
+          msg: "You called /remote",
+        }, {'test-header': 'remote success'});
+
+        element(by.id('method')).sendKeys('GET');
+        element(by.id('url')).sendKeys('remote');
+        element(by.id('call')).click();
+
+      }
 
     });
 
@@ -121,17 +140,23 @@ describe('Remote configuration behavior', function(){
   describe('Remotely configured GET call returning an error', function() {
 
     var httpBackend;
+    var firstRun = true;
 
     beforeEach(function() {
 
-      browser.get('index.html');
+      if(firstRun){
+        firstRun = false;
 
-      httpBackend = new HttpBackend(browser);
-      httpBackend.when('GET', '/not-there').respond(404, 'Not Found.');
+        browser.get('index.html');
 
-      element(by.id('method')).sendKeys('GET');
-      element(by.id('url')).sendKeys('not-there');
-      element(by.id('call')).click();
+        httpBackend = new HttpBackend(browser);
+        httpBackend.when('GET', '/not-there').respond(404, 'Not Found.');
+
+        element(by.id('method')).sendKeys('GET');
+        element(by.id('url')).sendKeys('not-there');
+        element(by.id('call')).click();
+
+      }
 
     });
 
