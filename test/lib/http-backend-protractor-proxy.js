@@ -5,7 +5,12 @@
  */
 'use strict';
 
-module.exports = function(browser){
+module.exports = function(browser, options){
+
+  options || (options = {buffer: false});
+  options.buffer || (options.buffer = false);
+
+  var buffer = [];
 
   function stringifyArgs(args){
     var i, s = [];
@@ -18,6 +23,26 @@ module.exports = function(browser){
       s.push(stringified);
     }
     return s.join(', ');
+  }
+
+  function executeOrBuffer(script){
+    if(options.buffer){
+      buffer.push(script);
+    } else {
+      return browser.executeScript(script);
+    }
+  }
+
+  this.flush = function(){
+    if(buffer.length > 0){
+      var script = buffer.join('\n');
+      buffer = [];
+      return browser.executeScript(script);
+    } else {
+      var deferred = protractor.promise.defer();
+      deferred.promise.complete();
+      return deferred.promise;
+    }
   }
 
   function createMethods(proxy, prefix, functionBuilder) {
@@ -39,10 +64,10 @@ module.exports = function(browser){
 
           var fullJS = whenJS +'.respond(' + stringifyArgs(arguments) + ');'
 
-          return browser.executeScript(fullJS);
+          return executeOrBuffer(fullJS);
         },
         passThrough: function() {
-          return browser.executeScript(whenJS +'.passThrough(' + stringifyArgs(arguments) + ');');
+          return executeOrBuffer(whenJS +'.passThrough(' + stringifyArgs(arguments) + ');');
         }
       };
 

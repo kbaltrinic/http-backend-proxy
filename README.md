@@ -7,7 +7,19 @@ The proxy itself is my own work.  However much of the test application and proje
 ## Getting and Using the Proxy
 Hopefully I will get a proper distribution set up soon.  For now, just grab the `http-backend-protractor-proxy.js` from the `test/lib` folder.  It is MIT licensed.
 
-The proxy supports the same interface as $httpBackend so [see its docs][httpBackend] for usage.  The only difference is that all proxied methods return promises in the fashion of most other Protractor methods.  See the end-to-end tests in `test/e2e` for some examples of its usage.
+The proxy supports the same interface as $httpBackend so [see its docs][httpBackend] for usage.  The only difference is that all proxied methods return promises in the fashion of most other Protractor methods.  (Exception: see Buffered Mode below.)
+
+To instantiate an instance of the proxy simply call `new HttpBackend(browser)` assuming `HttpBackend` is the name underwhich you imported the proxy.  `browser` is, of course, the protractor browser object.
+
+###Buffered Mode
+In addition, it is possible to use the proxy in a 'buffered' mode by passing `{buffer: true}` as the second argument to the constructor.  In this case proxied methods return void and do not immediately pass their calls through to the browser. Calling `flush()` will pass all buffered calls through to the browser at once and return a promise that will be fulfilled once all calls have been executed.
+
+Buffering is the generally recommended approach because in most cases you will need to make numersous calls to the proxy to set things up the way you want them for a set of tests.  Buffering will reduce the number of remote calls and thus speed things up considerably.
+
+###Resetting the Mock
+One final note.  The underlying $httpBackend mock does not support resetting the list of configured calls.  So there is no way to do this through the proxy either.  The simplest solution is use `browser.get()` to reload your page.  This of course resets the entire application state, not just that of the $httpBackend. This may not seem ideal but if used wisely will give you good tests isolation as well.
+
+See the end-to-end tests in `test/e2e` for some examples of usage.
 
 ###Configuring the App-Under-Test
 Somewhere in the AUT, you need to add the following line.
