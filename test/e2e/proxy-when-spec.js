@@ -13,16 +13,20 @@ describe('Remote configuration behavior', function(){
   var urlSelectorFunctionsSupported;
   var firstRun0 = true;
 
-  if(firstRun0){
-    firstRun0 = false;
+  beforeEach(function () {
 
-    browser.get('index.html');
-    element(by.id('version')).getText().then(function(version){
-      angularVersion = JSON.parse(version);
-      console.log("Angular version: " + version);
-      urlSelectorFunctionsSupported = angularVersion.major > 1 || angularVersion.minor > 2;
-    });
-  }
+    if(firstRun0){
+      firstRun0 = false;
+
+      browser.get('index.html');
+      element(by.id('version')).getText().then(function(version){
+        angularVersion = JSON.parse(version);
+        console.log("Angular version: " + version);
+        urlSelectorFunctionsSupported = angularVersion.major > 1 || angularVersion.minor > 2;
+      });
+    }
+
+  });
 
   describe('Basic remotely configured GET call', function() {
 
