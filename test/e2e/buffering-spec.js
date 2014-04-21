@@ -4,7 +4,7 @@
  *  These Specs provide a basic test of the buffering works as expected.
  */
 
-var HttpBackend = require('../lib/http-backend-protractor-proxy');
+var HttpBackend = require('../lib/http-backend-proxy');
 
 describe('Buffered configuration', function(){
 

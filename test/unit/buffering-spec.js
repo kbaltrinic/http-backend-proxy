@@ -1,6 +1,6 @@
 'use strict';
 
-var HttpBackend = require('../lib/http-backend-protractor-proxy');
+var HttpBackend = require('../lib/http-backend-proxy');
 
 //Used to mocks the globaly available protractor promise
 var protractor = { promise: {defer: function(){

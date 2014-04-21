@@ -5,7 +5,7 @@ This is a node module for use with the [AngularJS Protractor][protractor] end-to
 The proxy itself is my own work.  However much of the test application and project structure, etc. is based off of [the angular-seed project][angular-seed].  This includes significant parts of this README.
 
 ## Getting and Using the Proxy
-Hopefully I will get a proper distribution set up soon.  For now, just grab the `http-backend-protractor-proxy.js` from the `test/lib` folder.  It is MIT licensed.
+Hopefully I will get a proper distribution set up soon.  For now, just grab the `http-backend-proxy.js` from the `test/lib` folder.  It is MIT licensed.
 
 The proxy supports the same interface as $httpBackend so [see its docs][httpBackend] for usage.  The main difference is that all proxied methods return promises in the fashion of most other Protractor methods.  (Exception: see Buffered Mode below.)
 
@@ -82,7 +82,7 @@ Now browse to the app at `http://localhost:8000/app/index.html`.
       e2e/                  --> end-to-end specs
         scenarios.js
       lib/
-        http-backend-protractor-proxy.js  ==>This is the proxy libary that you want to grab!
+        http-backend-proxy.js  ==>This is the proxy libary that you want to grab!
       unit/                 --> unit level specs/tests (None for now)
 
 ## Testing

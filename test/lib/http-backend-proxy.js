@@ -1,5 +1,5 @@
 /**
- * http-backend-protractor-proxy - https://github.com/kbaltrinic/http-backend-protractor-proxy
+ * http-backend-proxy - https://github.com/kbaltrinic/http-backend-proxy
  * (c) 2014 Kenneth Baltrinic. http://www.baltrinic.com
  * License: MIT
  */

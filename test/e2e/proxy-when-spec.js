@@ -5,7 +5,7 @@
  *  indeed configure $httpBackend from within protractor.
  */
 
-var HttpBackend = require('../lib/http-backend-protractor-proxy');
+var HttpBackend = require('../lib/http-backend-proxy');
 
 describe('Remote configuration behavior', function(){
 

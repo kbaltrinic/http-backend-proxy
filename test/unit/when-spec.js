@@ -1,6 +1,6 @@
 'use strict';
 
-var HttpBackend = require('../lib/http-backend-protractor-proxy');
+var HttpBackend = require('../lib/http-backend-proxy');
 
 describe('Proxy.when JavaScript generation', function(){
 
