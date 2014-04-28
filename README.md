@@ -1,4 +1,6 @@
 #$httpBackend Proxy
+[![Build Status](https://travis-ci.org/kbaltrinic/http-backend-proxy.svg?branch=master)](https://travis-ci.org/kbaltrinic/http-backend-proxy)
+
 This is a node module for use with the [AngularJS Protractor][protractor] end-to-end testing framework.  It allows you to make configuration calls to [$httpBackend][httpBackend] from within Protractor itself.  Being able to configuring the mock backend along side the tests that depend upon it improves the modularity, encapsulation and flexibility of your tests.  The proxy allows $httpBackend to live up to its full potential, making it easier to test angular web applications in abstraction from their backend services.
 
 ### Credits
@@ -19,7 +21,7 @@ In addition, it is possible to use the proxy in a 'buffered' mode by passing `{b
 Buffering is the generally recommended approach because in most cases you will need to make numersous calls to the proxy to set things up the way you want them for a given spec.  Buffering will reduce the number of remote calls and considerably speed up your test setup.
 
 ###Resetting the Mock
-The underlying $httpBackend mock does not support resetting the set of configured calls.  So there is no way to do this through the proxy either.  The simplest solution is to use `browser.get()` to reload your page.  This of course resets the entire application state, not just that of the $httpBackend.  Doing so may not seem ideal but if used wisely will give you good tests isolation as well resetting the proxy.
+The underlying $httpBackend mock does not support resetting the set of configured calls.  So there is no way to do this through the proxy either.  The simplest solution is to use `browser.get()` to reload your page.  This of course resets the entire application state, not just that of the $httpBackend.  Doing so may not seem ideal but if used wisely will give you good test isolation as well resetting the proxy.
 
 ###Configuring the App-Under-Test
 Somewhere in the application-under-test, you need to add the following line.
