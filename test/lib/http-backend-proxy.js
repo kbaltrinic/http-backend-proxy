@@ -14,7 +14,9 @@ module.exports = function(browser, options){
   var proxy = this;
   var buffer = [];
 
-  this.context = {};
+  if(typeof(options.contextField) == 'string'){
+    this[options.contextField] = {};
+  }
 
   function stringifyArgs(args){
     var i, s = [];
@@ -62,7 +64,7 @@ module.exports = function(browser, options){
     }
 
     if(typeof(options.contextField) == 'string'){
-      return 'window.$httpBackend.' + options.contextField + '=' + stringifyObject(proxy.context) + ';';
+      return 'window.$httpBackend.' + options.contextField + '=' + stringifyObject(proxy[options.contextField]) + ';';
     } else {
       return '';
     }

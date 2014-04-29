@@ -16,101 +16,159 @@ describe('Context', function(){
 		browser = { executeScript: function(){} };
 		spyOn(browser, 'executeScript');
 
-		proxy = new HttpBackend(browser);
+	});
+
+	describe('when disabled', function(){
+
+		beforeEach(function () {
+
+			proxy = new HttpBackend(browser, {contextField: false});
+
+		});
+
+		it('should not initialize the context object', function(){
+
+			expect(proxy.context).not.toBeDefined();
+
+		});
+
+		it('should not forward any context to the browser', function(){
+
+			proxy.whenGET('/someURL').respond(200);
+
+			expect(browser.executeScript.calls[0].args[0]).not.toContain(
+				'window.$httpBackend.context=');
+
+		});
 
 	});
 
-	it('should initialize to an empty object', function(){
+	describe('when configured with an alternate field name', function(){
 
-		expect(proxy.context).toEqual({});
+		beforeEach(function () {
 
-	});
+			proxy = new HttpBackend(browser, {contextField: 'alternate'});
 
-	it('should forwarded to the browser even if empty', function(){
+		});
 
-		proxy.whenGET('/someURL').respond(200);
+		it('should initialize the alternate object', function(){
 
-		expect(browser.executeScript).toHaveBeenCalledWith(
-			'window.$httpBackend.context={};window.$httpBackend.whenGET("/someURL").respond(200);');
+			expect(proxy.alternate).toEqual({});
 
-	});
+		});
 
-	it('should forwarded all basic data types', function(){
+		it('should forward the context to the browser under the alternate name', function(){
 
-		proxy.context.string  = 'A string';
-		proxy.context.number  = 1;
-		proxy.context.boolean = true;
+			proxy.whenGET('/someURL').respond(200);
 
-		proxy.whenGET('/someURL').respond(200);
+			expect(browser.executeScript).toHaveBeenCalledWith(
+				'window.$httpBackend.alternate={};window.$httpBackend.whenGET("/someURL").respond(200);');
 
-		expect(browser.executeScript).toHaveBeenCalledWith(
-			'window.$httpBackend.context={"string":"A string","number":1,"boolean":true};window.$httpBackend.whenGET("/someURL").respond(200);');
+		});
 
 	});
 
-	it('should forwarded arrays', function(){
+	describe('in its default configuration', function(){
 
-		proxy.context.array = [1,2,3];
+		beforeEach(function () {
 
-		proxy.whenGET('/someURL').respond(200);
+			proxy = new HttpBackend(browser);
 
-		expect(browser.executeScript).toHaveBeenCalledWith(
-			'window.$httpBackend.context={"array":[1,2,3]};window.$httpBackend.whenGET("/someURL").respond(200);');
+		});
 
-	});
+		it('should initialize to an empty object', function(){
 
-	it('should forwarded objects', function(){
+			expect(proxy.context).toEqual({});
 
-		proxy.context.obj = {an: 'object'};
+		});
 
-		proxy.whenGET('/someURL').respond(200);
+		it('should forwarded to the browser even if empty', function(){
 
-		expect(browser.executeScript).toHaveBeenCalledWith(
-			'window.$httpBackend.context={"obj":{"an":"object"}};window.$httpBackend.whenGET("/someURL").respond(200);');
+			proxy.whenGET('/someURL').respond(200);
 
-	});
+			expect(browser.executeScript).toHaveBeenCalledWith(
+				'window.$httpBackend.context={};window.$httpBackend.whenGET("/someURL").respond(200);');
 
-	it('should forwarded regular expressions', function(){
+		});
 
-		proxy.context.regex = /find me/ig
+		it('should forwarded all basic data types', function(){
 
-		proxy.whenGET('/someURL').respond(200);
+			proxy.context.string  = 'A string';
+			proxy.context.number  = 1;
+			proxy.context.boolean = true;
 
-		expect(browser.executeScript).toHaveBeenCalledWith(
-			'window.$httpBackend.context={"regex":/find me/gi};window.$httpBackend.whenGET("/someURL").respond(200);');
+			proxy.whenGET('/someURL').respond(200);
 
-	});
+			expect(browser.executeScript).toHaveBeenCalledWith(
+				'window.$httpBackend.context={"string":"A string","number":1,"boolean":true};window.$httpBackend.whenGET("/someURL").respond(200);');
 
-	it('should forwarded functions expressions', function(){
+		});
 
-		proxy.context.func = function(n){return n++;};
+		it('should forwarded arrays', function(){
 
-		proxy.whenGET('/someURL').respond(200);
+			proxy.context.array = [1,2,3];
 
-		expect(browser.executeScript).toHaveBeenCalledWith(
-			'window.$httpBackend.context={"func":function (n){return n++;}};window.$httpBackend.whenGET("/someURL").respond(200);');
+			proxy.whenGET('/someURL').respond(200);
 
-	});
+			expect(browser.executeScript).toHaveBeenCalledWith(
+				'window.$httpBackend.context={"array":[1,2,3]};window.$httpBackend.whenGET("/someURL").respond(200);');
 
-	it('should forwarded regular expressions when nested in objects', function(){
+		});
 
-		proxy.context.obj = {regex:/find me/ig};
+		it('should forwarded objects', function(){
 
-		proxy.whenGET('/someURL').respond(200);
+			proxy.context.obj = {an: 'object'};
 
-		expect(browser.executeScript).toHaveBeenCalledWith(
-			'window.$httpBackend.context={"obj":{"regex":/find me/gi}};window.$httpBackend.whenGET("/someURL").respond(200);');
+			proxy.whenGET('/someURL').respond(200);
 
-	});
+			expect(browser.executeScript).toHaveBeenCalledWith(
+				'window.$httpBackend.context={"obj":{"an":"object"}};window.$httpBackend.whenGET("/someURL").respond(200);');
 
-	it('should forwarded functions expressions when nested in objects', function(){
+		});
 
-		proxy.context.obj = {func: function(n){return n++;}};
+		it('should forwarded regular expressions', function(){
 
-		proxy.whenGET('/someURL').respond(200);
+			proxy.context.regex = /find me/ig
 
-		expect(browser.executeScript).toHaveBeenCalledWith(
-			'window.$httpBackend.context={"obj":{"func":function (n){return n++;}}};window.$httpBackend.whenGET("/someURL").respond(200);');
+			proxy.whenGET('/someURL').respond(200);
+
+			expect(browser.executeScript).toHaveBeenCalledWith(
+				'window.$httpBackend.context={"regex":/find me/gi};window.$httpBackend.whenGET("/someURL").respond(200);');
+
+		});
+
+		it('should forwarded functions expressions', function(){
+
+			proxy.context.func = function(n){return n++;};
+
+			proxy.whenGET('/someURL').respond(200);
+
+			expect(browser.executeScript).toHaveBeenCalledWith(
+				'window.$httpBackend.context={"func":function (n){return n++;}};window.$httpBackend.whenGET("/someURL").respond(200);');
+
+		});
+
+		it('should forwarded regular expressions when nested in objects', function(){
+
+			proxy.context.obj = {regex:/find me/ig};
+
+			proxy.whenGET('/someURL').respond(200);
+
+			expect(browser.executeScript).toHaveBeenCalledWith(
+				'window.$httpBackend.context={"obj":{"regex":/find me/gi}};window.$httpBackend.whenGET("/someURL").respond(200);');
+
+		});
+
+		it('should forwarded functions expressions when nested in objects', function(){
+
+			proxy.context.obj = {func: function(n){return n++;}};
+
+			proxy.whenGET('/someURL').respond(200);
+
+			expect(browser.executeScript).toHaveBeenCalledWith(
+				'window.$httpBackend.context={"obj":{"func":function (n){return n++;}}};window.$httpBackend.whenGET("/someURL").respond(200);');
+
+		});
 
 	});
 
