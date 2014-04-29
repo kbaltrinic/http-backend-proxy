@@ -21,12 +21,7 @@ module.exports = function(browser, options){
   function stringifyArgs(args){
     var i, s = [];
     for(i = 0; i < args.length; i++){
-
-      var stringified = ( typeof args[i] === 'function' || args[i] instanceof RegExp )
-        ? args[i].toString()
-        : JSON.stringify(args[i]);
-
-      s.push(stringified);
+      s.push(stringifyObject(args[i]));
     }
     return s.join(', ');
   }
@@ -40,28 +35,31 @@ module.exports = function(browser, options){
     }
   }
 
-  function getContextDefinitionScript(){
+  function stringifyObject(obj){
 
-    function stringifyObject(obj){
+    if(obj === null)
+      return 'null';
 
-      if(typeof obj === 'function' || obj instanceof RegExp )
-        return obj.toString();
+    if(typeof obj === 'function' || obj instanceof RegExp )
+      return obj.toString();
 
-      if(typeof(obj) === 'object' && !(obj instanceof Array)){
+    if(typeof(obj) === 'object' && !(obj instanceof Array)){
 
-        var fields = [];
-        for (var key in obj) {
-          if (obj.hasOwnProperty(key)) {
-            fields.push('"'+ key + '":' + stringifyObject(obj[key]));
-          }
+      var fields = [];
+      for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          fields.push('"'+ key + '":' + stringifyObject(obj[key]));
         }
-
-        return '{' + fields.join(',') + '}';
       }
 
-      return JSON.stringify(obj);
-
+      return '{' + fields.join(',') + '}';
     }
+
+    return JSON.stringify(obj);
+
+  }
+
+  function getContextDefinitionScript(){
 
     if(typeof(options.contextField) == 'string'){
       return 'window.$httpBackend.' + options.contextField + '=' + stringifyObject(proxy[options.contextField]) + ';';

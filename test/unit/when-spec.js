@@ -99,6 +99,9 @@ describe('Proxy.when JavaScript generation', function(){
 
 	it('should generate correct JavaScript for calls with complex json arguments', function () {
 
+		//Admittedly in the below, passing a function doesn't make a lot of sense but out aim
+		//is simply to replicate the local call on the remote browser.  It would require special
+		//handling to NOT serialize functions so well keep it simple.
 		var json = {
 		  string: "abc",
 		  number: 290,
@@ -106,10 +109,12 @@ describe('Proxy.when JavaScript generation', function(){
 		    nested: "object"
 		  },
 		  array: [ 232, "ABC", null, {} ],
-		  null: null
+		  null: null,
+		  regex: /find me/gi,
+		  func: function(){ return null; }
 		};
 
-		var stringified = '{"string":"abc","number":290,"obj":{"nested":"object"},"array":[232,"ABC",null,{}],"null":null}';
+		var stringified = '{"string":"abc","number":290,"obj":{"nested":"object"},"array":[232,"ABC",null,{}],"null":null,"regex":/find me/gi,"func":function (){ return null; }}';
 
 		proxy.when('GET', '/endpoint', json).respond(200, json);
 		expect(browser.executeScript).toHaveBeenCalledWith(
@@ -126,7 +131,7 @@ describe('Proxy.when JavaScript generation', function(){
 	});
 
 
-	it('should generate correct JavaScript for calls with regular expressions functions', function () {
+	it('should generate correct JavaScript for calls with regular expressions', function () {
 
 		proxy.when('GET', /\/db/g ).passThrough();
 		expect(browser.executeScript).toHaveBeenCalledWith(

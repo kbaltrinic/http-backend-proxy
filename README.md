@@ -30,7 +30,7 @@ But what if I want to return some big piece of JSON?  If we were coding our test
 var searchResults = require('./mock-data/searchResults.json');
 $httpBackend.whenGET('/search&q=beatles').respond(200, searchResults)
 ```
-This too will work just fine as long as at the time you call `respond()` on the proxy, searchResults resolves to a JSON object (or anything you would expect to find in a JSON object: strings, numbers, regular expressions, arrays, etc.  *Just no functions!*
+This too will work just fine as long as at the time you call `respond()` on the proxy, searchResults resolves to a JSON object (or anything you would expect to find in a JSON object: strings, numbers, regular expressions, arrays, etc.
 
 To get a little fancier, you can even do this:
 ```JavaScript
