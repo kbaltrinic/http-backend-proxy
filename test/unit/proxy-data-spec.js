@@ -31,7 +31,7 @@ describe('Context', function(){
 		proxy.whenGET('/someURL').respond(200);
 
 		expect(browser.executeScript).toHaveBeenCalledWith(
-			'$httpBackend.context={};window.$httpBackend.whenGET("/someURL").respond(200);');
+			'window.$httpBackend.context={};window.$httpBackend.whenGET("/someURL").respond(200);');
 
 	});
 
@@ -44,7 +44,7 @@ describe('Context', function(){
 		proxy.whenGET('/someURL').respond(200);
 
 		expect(browser.executeScript).toHaveBeenCalledWith(
-			'$httpBackend.context={"string":"A string","number":1,"boolean":true};window.$httpBackend.whenGET("/someURL").respond(200);');
+			'window.$httpBackend.context={"string":"A string","number":1,"boolean":true};window.$httpBackend.whenGET("/someURL").respond(200);');
 
 	});
 
@@ -55,7 +55,7 @@ describe('Context', function(){
 		proxy.whenGET('/someURL').respond(200);
 
 		expect(browser.executeScript).toHaveBeenCalledWith(
-			'$httpBackend.context={"array":[1,2,3]};window.$httpBackend.whenGET("/someURL").respond(200);');
+			'window.$httpBackend.context={"array":[1,2,3]};window.$httpBackend.whenGET("/someURL").respond(200);');
 
 	});
 
@@ -66,7 +66,7 @@ describe('Context', function(){
 		proxy.whenGET('/someURL').respond(200);
 
 		expect(browser.executeScript).toHaveBeenCalledWith(
-			'$httpBackend.context={"obj":{"an":"object"}};window.$httpBackend.whenGET("/someURL").respond(200);');
+			'window.$httpBackend.context={"obj":{"an":"object"}};window.$httpBackend.whenGET("/someURL").respond(200);');
 
 	});
 
@@ -77,7 +77,7 @@ describe('Context', function(){
 		proxy.whenGET('/someURL').respond(200);
 
 		expect(browser.executeScript).toHaveBeenCalledWith(
-			'$httpBackend.context={"regex":/find me/gi};window.$httpBackend.whenGET("/someURL").respond(200);');
+			'window.$httpBackend.context={"regex":/find me/gi};window.$httpBackend.whenGET("/someURL").respond(200);');
 
 	});
 
@@ -88,7 +88,7 @@ describe('Context', function(){
 		proxy.whenGET('/someURL').respond(200);
 
 		expect(browser.executeScript).toHaveBeenCalledWith(
-			'$httpBackend.context={"func":function (n){return n++;}};window.$httpBackend.whenGET("/someURL").respond(200);');
+			'window.$httpBackend.context={"func":function (n){return n++;}};window.$httpBackend.whenGET("/someURL").respond(200);');
 
 	});
 
@@ -99,7 +99,7 @@ describe('Context', function(){
 		proxy.whenGET('/someURL').respond(200);
 
 		expect(browser.executeScript).toHaveBeenCalledWith(
-			'$httpBackend.context={"obj":{"regex":/find me/gi}};window.$httpBackend.whenGET("/someURL").respond(200);');
+			'window.$httpBackend.context={"obj":{"regex":/find me/gi}};window.$httpBackend.whenGET("/someURL").respond(200);');
 
 	});
 
@@ -110,7 +110,7 @@ describe('Context', function(){
 		proxy.whenGET('/someURL').respond(200);
 
 		expect(browser.executeScript).toHaveBeenCalledWith(
-			'$httpBackend.context={"obj":{"func":function (n){return n++;}}};window.$httpBackend.whenGET("/someURL").respond(200);');
+			'window.$httpBackend.context={"obj":{"func":function (n){return n++;}}};window.$httpBackend.whenGET("/someURL").respond(200);');
 
 	});
 

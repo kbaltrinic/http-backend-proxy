@@ -64,7 +64,7 @@ module.exports = function(browser, options){
     }
 
     if(typeof(options.contextField) == 'string'){
-      return '$httpBackend.' + options.contextField + '=' + stringifyObject(proxy.context) + ';';
+      return 'window.$httpBackend.' + options.contextField + '=' + stringifyObject(proxy.context) + ';';
     } else {
       return '';
     }
