@@ -70,7 +70,7 @@ module.exports = function(browser, options){
 
   this.flush = function(){
     if(buffer.length > 0){
-      var script = buffer.join('\n');
+      var script = getContextDefinitionScript() + buffer.join('\n');
       buffer = [];
       return browser.executeScript(script);
     } else {
