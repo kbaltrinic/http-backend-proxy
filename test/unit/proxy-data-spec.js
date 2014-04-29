@@ -47,4 +47,27 @@ describe('Context', function(){
 			'$httpBackend.context={"string":"A string","number":1,"boolean":true};window.$httpBackend.whenGET("/someURL").respond(200);');
 
 	});
+
+	it('should forwarded arrays', function(){
+
+		proxy.context.array = [1,2,3];
+
+		proxy.whenGET('/someURL').respond(200);
+
+		expect(browser.executeScript).toHaveBeenCalledWith(
+			'$httpBackend.context={"array":[1,2,3]};window.$httpBackend.whenGET("/someURL").respond(200);');
+
+	});
+
+	it('should forwarded objects', function(){
+
+		proxy.context.obj = {an: 'object'};
+
+		proxy.whenGET('/someURL').respond(200);
+
+		expect(browser.executeScript).toHaveBeenCalledWith(
+			'$httpBackend.context={"obj":{"an":"object"}};window.$httpBackend.whenGET("/someURL").respond(200);');
+
+	});
+
 });
