@@ -39,8 +39,23 @@ module.exports = function(browser, options){
   }
 
   function getContextDefinitionScript(){
+    function stringifyObject(obj){
+      return ( typeof obj === 'function' || obj instanceof RegExp )
+        ? obj.toString()
+        : JSON.stringify(obj);
+    }
     if(typeof(options.contextField) == 'string'){
-      return '$httpBackend.' + options.contextField + '=' + JSON.stringify(proxy.context) + ';';
+
+      var fields = [];
+      for (var key in proxy.context) {
+        if (proxy.context.hasOwnProperty(key)) {
+          fields.push('"'+ key + '":' + stringifyObject(proxy.context[key]));
+        }
+      }
+      fields = '{' + fields.join(',') + '}';
+
+      return '$httpBackend.' + options.contextField + '=' + fields + ';';
+
     } else {
       return '';
     }
