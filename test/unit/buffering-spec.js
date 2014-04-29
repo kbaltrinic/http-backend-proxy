@@ -39,7 +39,7 @@ describe('Buffered configuration', function(){
 
 		beforeEach(function () {
 
-			proxy = new HttpBackend(browser);
+			proxy = new HttpBackend(browser, {contextField: false});
 
 			returnValue1 = proxy.whenGET('/url1').passThrough();
 			returnValue2 = proxy.whenGET('/url2').passThrough();
@@ -76,7 +76,7 @@ describe('Buffered configuration', function(){
 
 		beforeEach(function () {
 
-			proxy = new HttpBackend(browser, {buffer: false});
+			proxy = new HttpBackend(browser, {buffer: false, contextField: false});
 
 			returnValue1 = proxy.whenGET('/url1').passThrough();
 			returnValue2 = proxy.whenGET('/url2').passThrough();
@@ -113,7 +113,7 @@ describe('Buffered configuration', function(){
 
 		beforeEach(function () {
 
-			proxy = new HttpBackend(browser, {buffer: true});
+			proxy = new HttpBackend(browser, {buffer: true, contextField: false});
 
 			returnValue1 = proxy.whenGET('/url1').passThrough();
 			returnValue2 = proxy.whenGET('/url2').passThrough();

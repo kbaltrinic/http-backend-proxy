@@ -7,8 +7,9 @@
 
 module.exports = function(browser, options){
 
-  options || (options = {buffer: false});
+  options || (options = {});
   options.buffer || (options.buffer = false);
+  typeof(options.contextField) !== 'undefined' || (options.contextField = 'context');
 
   var proxy = this;
   var buffer = [];
@@ -38,7 +39,11 @@ module.exports = function(browser, options){
   }
 
   function getContextDefinitionScript(){
-    return '$httpBackend.context=' + JSON.stringify(proxy.context) + ';';
+    if(typeof(options.contextField) == 'string'){
+      return '$httpBackend.' + options.contextField + '=' + JSON.stringify(proxy.context) + ';';
+    } else {
+      return '';
+    }
   }
 
   this.flush = function(){

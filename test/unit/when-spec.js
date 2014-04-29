@@ -12,7 +12,7 @@ describe('Proxy.when JavaScript generation', function(){
 		browser = { executeScript: function(){} };
 		spyOn(browser, 'executeScript');
 
-		proxy = new HttpBackend(browser);
+		proxy = new HttpBackend(browser, {contextField: false});
 
 	});
 
