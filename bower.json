@@ -1,10 +1,4 @@
 {
-  "name": "http-backend-proxy",
-  "description": "A proxy that allows configuring the ngMockE2E $httpBackend service from within protractor based tests.",
-  "version": "1.0.0-alpha.1",
-  "homepage": "https://github.com/kbaltrinic/kb-angular-mock-e2e",
-  "license": "MIT",
-  "private": false,
   "devDependencies": {
     "angular": "1.2.x",
     "angular-mocks": "1.2.x"
