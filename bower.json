@@ -1,4 +1,5 @@
 {
+  "name": "http-backend-proxy",
   "devDependencies": {
     "angular": "1.2.x",
     "angular-mocks": "1.2.x"
