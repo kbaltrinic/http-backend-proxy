@@ -42,7 +42,10 @@ module.exports = function(browser, options){
 
     function stringifyObject(obj){
 
-      if(typeof(obj) === 'object' && !(obj instanceof Array) && !(obj instanceof RegExp)){
+      if(typeof obj === 'function' || obj instanceof RegExp )
+        return obj.toString();
+
+      if(typeof(obj) === 'object' && !(obj instanceof Array)){
 
         var fields = [];
         for (var key in obj) {
@@ -52,14 +55,9 @@ module.exports = function(browser, options){
         }
 
         return '{' + fields.join(',') + '}';
-
-      } else {
-
-        return ( typeof obj === 'function' || obj instanceof RegExp )
-          ? obj.toString()
-          : JSON.stringify(obj);
-
       }
+
+      return JSON.stringify(obj);
 
     }
 
