@@ -39,23 +39,32 @@ module.exports = function(browser, options){
   }
 
   function getContextDefinitionScript(){
+
     function stringifyObject(obj){
-      return ( typeof obj === 'function' || obj instanceof RegExp )
-        ? obj.toString()
-        : JSON.stringify(obj);
-    }
-    if(typeof(options.contextField) == 'string'){
 
-      var fields = [];
-      for (var key in proxy.context) {
-        if (proxy.context.hasOwnProperty(key)) {
-          fields.push('"'+ key + '":' + stringifyObject(proxy.context[key]));
+      if(typeof(obj) === 'object' && !(obj instanceof Array) && !(obj instanceof RegExp)){
+
+        var fields = [];
+        for (var key in obj) {
+          if (obj.hasOwnProperty(key)) {
+            fields.push('"'+ key + '":' + stringifyObject(obj[key]));
+          }
         }
+
+        return '{' + fields.join(',') + '}';
+
+      } else {
+
+        return ( typeof obj === 'function' || obj instanceof RegExp )
+          ? obj.toString()
+          : JSON.stringify(obj);
+
       }
-      fields = '{' + fields.join(',') + '}';
 
-      return '$httpBackend.' + options.contextField + '=' + fields + ';';
+    }
 
+    if(typeof(options.contextField) == 'string'){
+      return '$httpBackend.' + options.contextField + '=' + stringifyObject(proxy.context) + ';';
     } else {
       return '';
     }

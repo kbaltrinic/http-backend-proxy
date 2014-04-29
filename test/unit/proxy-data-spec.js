@@ -83,7 +83,7 @@ describe('Context', function(){
 
 	it('should forwarded functions expressions', function(){
 
-		proxy.context.func = function(n){return n++;}
+		proxy.context.func = function(n){return n++;};
 
 		proxy.whenGET('/someURL').respond(200);
 
@@ -91,4 +91,27 @@ describe('Context', function(){
 			'$httpBackend.context={"func":function (n){return n++;}};window.$httpBackend.whenGET("/someURL").respond(200);');
 
 	});
+
+	it('should forwarded regular expressions when nested in objects', function(){
+
+		proxy.context.obj = {regex:/find me/ig};
+
+		proxy.whenGET('/someURL').respond(200);
+
+		expect(browser.executeScript).toHaveBeenCalledWith(
+			'$httpBackend.context={"obj":{"regex":/find me/gi}};window.$httpBackend.whenGET("/someURL").respond(200);');
+
+	});
+
+	it('should forwarded functions expressions when nested in objects', function(){
+
+		proxy.context.obj = {func: function(n){return n++;}};
+
+		proxy.whenGET('/someURL').respond(200);
+
+		expect(browser.executeScript).toHaveBeenCalledWith(
+			'$httpBackend.context={"obj":{"func":function (n){return n++;}}};window.$httpBackend.whenGET("/someURL").respond(200);');
+
+	});
+
 });
