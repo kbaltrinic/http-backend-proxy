@@ -12,6 +12,8 @@ module.exports = function(browser, options){
 
   var buffer = [];
 
+  this.context = {};
+
   function stringifyArgs(args){
     var i, s = [];
     for(i = 0; i < args.length; i++){
