@@ -10,6 +10,7 @@ module.exports = function(browser, options){
   options || (options = {buffer: false});
   options.buffer || (options.buffer = false);
 
+  var proxy = this;
   var buffer = [];
 
   this.context = {};
@@ -31,8 +32,13 @@ module.exports = function(browser, options){
     if(options.buffer){
       buffer.push(script);
     } else {
+      script = getContextDefinitionScript() + script;
       return browser.executeScript(script);
     }
+  }
+
+  function getContextDefinitionScript(){
+    return '$httpBackend.context=' + JSON.stringify(proxy.context) + ';';
   }
 
   this.flush = function(){
