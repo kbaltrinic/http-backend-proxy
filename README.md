@@ -7,9 +7,14 @@ This is a node module for use with the [AngularJS Protractor][protractor] end-to
 The proxy itself is my own work.  However much of the test application and project structure, etc. is based off of [the angular-seed project][angular-seed].  This includes significant parts of this README.
 
 ## Getting and Using the Proxy
-The proxy can be installed into your project using `npm install http-backend-proxy` or better yet, just add `http-backend-proxy` to your devDependencies in your `package.json` file.  The current version is 1.1.0.  The sofware is released under the MIT licensed.
+The proxy can be installed into your project by calling `npm install http-backend-proxy` or better yet, just add `http-backend-proxy` to devDependencies in your `package.json` file.  The current version is 1.1.0.  The sofware is released under the MIT license.
 
-To instantiate an instance of the proxy simply call `new HttpBackend(browser)` assuming you previously did: `var HttpBackend = require('http-backend-proxy');`. `browser` is, of course, the protractor browser object.  A configuration object may be passed as a second argument to the constructor.  Available configuration options are discussed further below.
+To instantiate an instance of the proxy, require it and create a new instance:
+```JavaScript
+var HttpBackend = require('http-backend-proxy');
+var proxy = new HttpBackend(browser);
+```
+`browser` is, of course, the protractor browser object.  A configuration object may be passed as a second argument to the constructor.  Available configuration options are discussed further below.
 
 The proxy supports the same interface as $httpBackend so [see its docs][httpBackend] for usage.  The main difference is that all proxied methods return promises in the fashion of most other Protractor methods.  (Exception: see Buffered Mode below.)
 
@@ -41,6 +46,10 @@ That will work just fine!  The proxy will serialize the function and send it up 
 
 But what about:
 ```JavaScript
+var searchResults = require('./mock-data/searchResults.json');
+
+function getQueryTermsFrom(url){  ... implemenation omitted ... };
+
 proxy.when('GET', /search\?q=.*/)
     .respond(function(method, url){
       var term = getQueryTermFrom(url);
@@ -54,6 +63,8 @@ Now we have a problem.  The proxy can serialize the function just fine and send 
 The proxy provides a special object called the context object that is intended to help out in theses kinds of situations.  The context object is a property of the proxy, called `context` oddly enough, the value of which will be syncronized between the proxy and the browser-side $httpBackend before any proxied calls are executed on the browser.  With this object in place we can now do the following:
 
 ```JavaScript
+var searchResults = require('./mock-data/searchResults.json');
+
 proxy.context = {
   searchResults: searchResults,
   getQueryTermsFrom: function (url){  ... implemenation omitted ... };
@@ -69,7 +80,7 @@ proxy.when('GET', /search\?q=.*/)
 
 *Hint:* If we rename our in-test proxy from `proxy` to `$httpBackend`, our tests will more easily get through any linting we may have set up.
 
-When buffering is turned off the context object is synchronized with the browser before every call to `respond()`.  If buffering is turned on, this syncronization occurs as part of the call to `flush()`.  This is important, because is it the value of context at the time of syncronization, not at the point when `respond()` is called on the proxy, that determines its value in the browser.
+When buffering is turned off, the context object is synchronized with the browser before every call to `respond()`.  When buffering is turned on, this syncronization occurs as part of the call to `flush()`.  This is important, because is it the value of the context object at the time of syncronization, not at the point when `respond()` is called on the proxy, that determines its value in the browser.  More precisely, since values in the context object may not even be evaluated in the browser until an HTTP call occurs, the value at the time of the HTTP call will be the value of the object as of the most recent prior syncronization.  Said another way, there is no closure mechanism in play here.
 
 ####Configuring the Context Object
 If for some reason you don't like your context object being called 'context' (or more importantly, if it should turn out to conflict with a future property of $httpBackend), it can be renamed by adding `contextField: "a-new-field-name"` to the configuration object that the proxy is constructed with.  Passing a value of `false` will disable the context passing mechanism all together.
