@@ -6,8 +6,11 @@ This is a node module for use with the [AngularJS Protractor][protractor] end-to
 ### Credits
 The proxy itself is my own work.  However much of the test application and project structure, etc. is based off of [the angular-seed project][angular-seed].  This includes significant parts of this README.
 
+###Release Notes
+See the [wiki](https://github.com/kbaltrinic/http-backend-proxy/wiki/Release-Notes).
+
 ## Getting and Using the Proxy
-The proxy can be installed into your project by calling `npm install http-backend-proxy` or better yet, just add `http-backend-proxy` to devDependencies in your `package.json` file.  The current version is 1.1.0.  The sofware is released under the MIT license.
+The proxy can be installed into your project by calling `npm install http-backend-proxy` or better yet, just add `http-backend-proxy` to devDependencies in your `package.json` file.  The current version is 1.1.1.  The sofware is released under the MIT license.
 
 To instantiate an instance of the proxy, require it and create a new instance:
 ```JavaScript
