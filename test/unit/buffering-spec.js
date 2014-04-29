@@ -18,6 +18,7 @@ describe('Buffered configuration', function(){
 	var browser;
 
 	beforeEach(function () {
+
 		GLOBAL.protractor = protractor;
 
 		browser = { executeScript: function(){
@@ -27,6 +28,16 @@ describe('Buffered configuration', function(){
 		}};
 
 		spyOn(browser, 'executeScript').andCallThrough();
+
+		this.addMatchers({
+			toStartWith: function(str){
+				return this.actual.indexOf(str) == 0;
+			},
+			toEndWith: function (str){
+				return this.actual.indexOf(str) + str.length == this.actual.length;
+			}
+		});
+
 	});
 
 	afterEach(function () {
@@ -51,13 +62,20 @@ describe('Buffered configuration', function(){
 		});
 
 		it('should call executeScript first for the first call to the proxy', function () {
-			expect(browser.executeScript.calls[0].args[0]).toEqual(
+			expect(browser.executeScript.calls[0].args[0]).toEndWith(
 				'window.$httpBackend.whenGET("/url1").passThrough();');
 		});
 
 		it('should call executeScript again for the second call to the proxy', function () {
-			expect(browser.executeScript.calls[1].args[0]).toEqual(
+			expect(browser.executeScript.calls[1].args[0]).toEndWith(
 				'window.$httpBackend.whenGET("/url2").passThrough();');
+		});
+
+		it('should pass the data context on each call to the proxy', function () {
+			expect(browser.executeScript.calls[0].args[0]).toStartWith(
+				'window.$httpBackend.context={};');
+			expect(browser.executeScript.calls[1].args[0]).toStartWith(
+				'window.$httpBackend.context={};');
 		});
 
 		it('should return a pending promise for the first call', function(){
@@ -88,13 +106,20 @@ describe('Buffered configuration', function(){
 		});
 
 		it('should call executeScript first for the first call to the proxy', function () {
-			expect(browser.executeScript.calls[0].args[0]).toEqual(
+			expect(browser.executeScript.calls[0].args[0]).toEndWith(
 				'window.$httpBackend.whenGET("/url1").passThrough();');
 		});
 
 		it('should call executeScript again for the second call to the proxy', function () {
-			expect(browser.executeScript.calls[1].args[0]).toEqual(
+			expect(browser.executeScript.calls[1].args[0]).toEndWith(
 				'window.$httpBackend.whenGET("/url2").passThrough();');
+		});
+
+		it('should pass the data context on each call to the proxy', function () {
+			expect(browser.executeScript.calls[0].args[0]).toStartWith(
+				'window.$httpBackend.context={};');
+			expect(browser.executeScript.calls[1].args[0]).toStartWith(
+				'window.$httpBackend.context={};');
 		});
 
 		it('should return a pending promise for the first call', function(){
@@ -107,7 +132,7 @@ describe('Buffered configuration', function(){
 
 	});
 
-	describe('A proxy with buffering turne on', function () {
+	describe('A proxy with buffering turned on', function () {
 
 		var proxy, returnValue1, returnValue2;
 
@@ -115,8 +140,12 @@ describe('Buffered configuration', function(){
 
 			proxy = new HttpBackend(browser, {buffer: true});
 
+			proxy.context.value="before";
+
 			returnValue1 = proxy.whenGET('/url1').passThrough();
 			returnValue2 = proxy.whenGET('/url2').passThrough();
+
+			proxy.context.value="current";
 
 		});
 
@@ -153,8 +182,13 @@ describe('Buffered configuration', function(){
 			});
 
 			it('should include all calls to the proxy in that single call', function () {
-				expect(browser.executeScript.calls[0].args[0]).toEqual(
+				expect(browser.executeScript.calls[0].args[0]).toEndWith(
 					'window.$httpBackend.whenGET("/url1").passThrough();\nwindow.$httpBackend.whenGET("/url2").passThrough();');
+			});
+
+			it('should pass the current data context to the browser', function () {
+				expect(browser.executeScript.calls[0].args[0]).toStartWith(
+					'window.$httpBackend.context={"value":"current"};');
 			});
 
 			describe('additional calls to flush', function () {
@@ -173,6 +207,7 @@ describe('Buffered configuration', function(){
 				it('should return a completed promise.', function () {
 					expect(returnValue2.isComplete).toEqual(true);
 				});
+
 			});
 
 		});
