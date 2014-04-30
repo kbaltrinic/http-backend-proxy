@@ -1,17 +1,7 @@
 'use strict';
 
 var HttpBackend = require('../lib/http-backend-proxy');
-
-//Used to mocks the globaly available protractor promise
-var protractor = { promise: {defer: function(){
-	var promise = {
-	  isComplete: false,
-	  complete: function(){
-	    promise.isComplete = true;
-	  }
-	};
-	return{ promise: promise };
-}}};
+var Browser = require('./helpers/protractor-browser')
 
 describe('Buffered configuration', function(){
 
@@ -19,15 +9,7 @@ describe('Buffered configuration', function(){
 
 	beforeEach(function () {
 
-		GLOBAL.protractor = protractor;
-
-		browser = { executeScript: function(){
-			//calling executeScript should return a promise.
-			var deferred = protractor.promise.defer();
-			return deferred.promise;
-		}};
-
-		spyOn(browser, 'executeScript').andCallThrough();
+		browser = new Browser();
 
 		this.addMatchers({
 			toStartWith: function(str){
@@ -41,7 +23,7 @@ describe('Buffered configuration', function(){
 	});
 
 	afterEach(function () {
-		delete GLOBAL.protractor;
+		browser.cleanUp();
 	});
 
 	describe('A proxy with buffering not configured', function () {

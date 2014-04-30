@@ -65,5 +65,17 @@ describe('Context', function(){
 
     });
 
+    it('syncronization via syncContext should update the server context', function() {
+
+      $httpBackend.syncContext({statusText: 'Event Better!'});
+
+      element(by.id('url')).clear();
+      element(by.id('url')).sendKeys('remote');
+      element(by.id('call')).click();
+
+      expect(element(by.id('r-status')).getText()).toEqual('205');
+      expect(element(by.id('r-data')).getText()).toEqual('"Event Better!"');
+
+    });
 
 });

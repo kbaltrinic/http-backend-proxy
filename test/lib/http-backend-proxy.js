@@ -7,14 +7,24 @@
 
 module.exports = function(browser, options){
 
+  var DEFAULT_CONTEXT_FIELD_NAME = 'context';
+
   options || (options = {});
   options.buffer || (options.buffer = false);
-  typeof(options.contextField) !== 'undefined' || (options.contextField = 'context');
+
+  //This is for backward compatibility since we changed the API from 1.1.1 to 1.2
+  if(options.contextField === false){
+    console.warn("Setting contextField: false is deprected.  Set contextAutoSync: false instead.");
+    options.contextAutoSync = false;
+  }
+
+  options.contextAutoSync = typeof(options.contextAutoSync) === 'undefined' || !!options.contextAutoSync;
+  options.contextField || (options.contextField = DEFAULT_CONTEXT_FIELD_NAME);
 
   var proxy = this;
   var buffer = [];
 
-  if(typeof(options.contextField) == 'string'){
+  if(options.contextAutoSync){
     this[options.contextField] = {};
   }
 
@@ -69,6 +79,40 @@ module.exports = function(browser, options){
     }
   }
 
+  this.syncContext = function(context){
+
+    if(typeof(context) !== 'undefined'){
+
+      //If and only if both are simple objects, merge them
+      if(Object.prototype.toString.call(proxy[options.contextField]) === '[object Object]'
+        && Object.prototype.toString.call(context) === '[object Object]'){
+
+        for (var key in context) {
+          if (context.hasOwnProperty(key)) {
+            proxy[options.contextField][key] = context[key];
+          }
+        }
+
+        context = proxy[options.contextField];
+
+      } else {
+
+        proxy[options.contextField] = context;
+
+      }
+
+    } else {
+
+      if(typeof(proxy[options.contextField]) === 'undefined'){
+        proxy[options.contextField] = {};
+      }
+
+      context =  proxy[options.contextField];
+    }
+
+    return browser.executeScript(getContextDefinitionScript(context));
+  }
+
   function stringifyArgs(args){
     var i, s = [];
     for(i = 0; i < args.length; i++){
@@ -77,10 +121,14 @@ module.exports = function(browser, options){
     return s.join(', ');
   }
 
-  function getContextDefinitionScript(){
+  function getContextDefinitionScript(context){
 
-    if(typeof(options.contextField) == 'string'){
-      return 'window.$httpBackend.' + options.contextField + '=' + stringifyObject(proxy[options.contextField]) + ';';
+    if(options.contextAutoSync){
+      context = context || proxy[options.contextField];
+    }
+
+    if(typeof(context) !== 'undefined'){
+      return 'window.$httpBackend.' + options.contextField + '=' + stringifyObject(context) + ';';
     } else {
       return '';
     }

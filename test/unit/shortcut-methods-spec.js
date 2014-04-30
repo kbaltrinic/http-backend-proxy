@@ -12,7 +12,7 @@ describe('Shortcut Method JavaScript Generation', function(){
 		browser = { executeScript: function(){} };
 		spyOn(browser, 'executeScript');
 
-		proxy = new HttpBackend(browser, {contextField: false});
+		proxy = new HttpBackend(browser, {contextAutoSync: false});
 
 	});
 
