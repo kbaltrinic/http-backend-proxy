@@ -75,13 +75,33 @@ describe('The syncContext method', function(){
         });
     });
 
+    describe('when the context object is disabled', function(){
+
+        var proxy;
+
+        beforeEach(function () {
+
+            proxy = new HttpBackend(browser, {contextField: false});
+            proxy.context = 'myContext';
+            proxy.syncContext();
+
+        });
+
+        it('should not syncronize the context object to the browser', function(){
+
+            expect(browser.executeScript).not.toHaveBeenCalled();
+
+        });
+
+    });
+
     describe('when and explicit context object is provided', function(){
 
         var proxy;
 
         beforeEach(function () {
 
-            proxy = new HttpBackend(browser, {buffer: true});
+            proxy = new HttpBackend(browser);
             proxy.context = 'myContext';
             proxy.syncContext('anotherContext');
 
@@ -104,7 +124,8 @@ describe('The syncContext method', function(){
 
             beforeEach(function () {
 
-                proxy = new HttpBackend(browser, {buffer: true, contextField: 'alternate'});
+                browser.executeScript.reset();
+                proxy = new HttpBackend(browser, {contextField: 'alternate'});
                 proxy.alternate = 'myContext';
                 proxy.syncContext('anotherContext');
 
@@ -120,6 +141,32 @@ describe('The syncContext method', function(){
             it('should update the local context object', function(){
 
                 expect(proxy.alternate).toEqual('anotherContext');
+
+            });
+
+        });
+
+        describe('and the context object has been disabled', function(){
+
+            beforeEach(function () {
+
+                browser.executeScript.reset();
+                proxy = new HttpBackend(browser, {contextField: false});
+                proxy.context = 'myContext';
+                proxy.syncContext('anotherContext');
+
+            });
+
+            it('should syncronize the provided context object to the browser using the default field name', function(){
+
+                expect(browser.executeScript).toHaveBeenCalledWith(
+                    'window.$httpBackend.context="anotherContext";');
+
+            });
+
+            it('should not update any local fields', function(){
+
+                expect(proxy.context).toEqual('myContext');
 
             });
 

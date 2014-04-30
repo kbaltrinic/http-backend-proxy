@@ -71,11 +71,18 @@ module.exports = function(browser, options){
 
   this.syncContext = function(context){
 
-    if(context){
-      proxy[options.contextField] = context;
+    if(typeof(options.contextField) == 'string'){
+      if(context){
+         proxy[options.contextField] = context;
+      }
+      else{
+        context =  proxy[options.contextField];
+      }
+    } else if ( typeof(context) === 'undefined' ) {
+      return;
     }
 
-    return browser.executeScript(getContextDefinitionScript());
+    return browser.executeScript(getContextDefinitionScript(context));
   }
 
   function stringifyArgs(args){
@@ -86,10 +93,12 @@ module.exports = function(browser, options){
     return s.join(', ');
   }
 
-  function getContextDefinitionScript(){
+  function getContextDefinitionScript(context){
 
-    if(typeof(options.contextField) == 'string'){
-      return 'window.$httpBackend.' + options.contextField + '=' + stringifyObject(proxy[options.contextField]) + ';';
+    context = context || proxy[options.contextField]
+
+    if(context){
+      return 'window.$httpBackend.' + (options.contextField || 'context') + '=' + stringifyObject(context) + ';';
     } else {
       return '';
     }
