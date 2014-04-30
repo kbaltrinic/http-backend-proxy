@@ -123,34 +123,96 @@ describe('The syncContext method', function(){
 
     describe('when an explicit context object is provided', function(){
 
-        var proxy;
+        describe('and both the prior context and the new context are simple objects', function(){
 
-        beforeEach(function () {
+            var proxy;
 
-            proxy = new HttpBackend(browser);
-            proxy.context = 'myContext';
-            proxy.syncContext('anotherContext');
+            beforeEach(function () {
+
+                proxy = new HttpBackend(browser);
+                proxy.context = { value1: 'old1', value2: 'old2'};
+                proxy.syncContext({value2:'new2',value3:'new3'});
+
+            });
+
+            it('should syncronize the merged context object to the browser', function(){
+
+                expect(browser.executeScript).toHaveBeenCalledWith(
+                    'window.$httpBackend.context={"value1":"old1","value2":"new2","value3":"new3"};');
+
+            });
+
+            it('should update the local context object with the merged values', function(){
+
+                expect(proxy.context).toEqual({value1:'old1',value2:'new2',value3:'new3'});
+
+            });
 
         });
 
-        it('should syncronize the provided context object to the browser', function(){
+        describe('and only the prior context is a simple object', function(){
 
-            expect(browser.executeScript).toHaveBeenCalledWith(
-                'window.$httpBackend.context="anotherContext";');
+            var proxy;
+
+            beforeEach(function () {
+
+                proxy = new HttpBackend(browser);
+                proxy.context = { old: 'value'}
+                //A Regex is an object but not something we would want to merge with!
+                proxy.syncContext(/a regex/);
+
+            });
+
+            it('should syncronize the new context object to the browser', function(){
+
+                expect(browser.executeScript).toHaveBeenCalledWith(
+                    'window.$httpBackend.context=/a regex/;');
+
+            });
+
+            it('should update the local context object with the new value', function(){
+
+                expect(proxy.context).toEqual(/a regex/);
+
+            });
 
         });
 
-        it('should update the local context object', function(){
 
-            expect(proxy.context).toEqual('anotherContext');
+        describe('and only the new context is a simple object', function(){
+
+            var proxy;
+
+            beforeEach(function () {
+
+                proxy = new HttpBackend(browser);
+                //A array is also an object that we would not want to merge with.
+                proxy.context = ['old', 'value'];
+                proxy.syncContext({aNew: 'value'});
+
+            });
+
+            it('should syncronize the new context object to the browser', function(){
+
+                expect(browser.executeScript).toHaveBeenCalledWith(
+                    'window.$httpBackend.context={"aNew":"value"};');
+
+            });
+
+            it('should update the local context object with the new value', function(){
+
+                expect(proxy.context).toEqual({aNew: 'value'});
+
+            });
 
         });
 
         describe('and an alternative context field name was configured', function(){
 
+            var proxy;
+
             beforeEach(function () {
 
-                browser.executeScript.reset();
                 proxy = new HttpBackend(browser, {contextField: 'alternate'});
                 proxy.alternate = 'myContext';
                 proxy.syncContext('anotherContext');
@@ -174,9 +236,10 @@ describe('The syncContext method', function(){
 
         describe('and auto-syncronization of the context object has been disabled', function(){
 
+            var proxy;
+
             beforeEach(function () {
 
-                browser.executeScript.reset();
                 proxy = new HttpBackend(browser, {contextAutoSync: false});
                 proxy.syncContext('anotherContext');
 
@@ -189,7 +252,7 @@ describe('The syncContext method', function(){
 
             });
 
-            it('should update any local fields', function(){
+            it('should update the local context object', function(){
 
                 expect(proxy.context).toEqual('anotherContext');
 

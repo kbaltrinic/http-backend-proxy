@@ -83,7 +83,23 @@ module.exports = function(browser, options){
 
     if(typeof(context) !== 'undefined'){
 
-      proxy[options.contextField] = context;
+      //If and only if both are simple objects, merge them
+      if(Object.prototype.toString.call(proxy[options.contextField]) === '[object Object]'
+        && Object.prototype.toString.call(context) === '[object Object]'){
+
+        for (var key in context) {
+          if (context.hasOwnProperty(key)) {
+            proxy[options.contextField][key] = context[key];
+          }
+        }
+
+        context = proxy[options.contextField];
+
+      } else {
+
+        proxy[options.contextField] = context;
+
+      }
 
     } else {
 
