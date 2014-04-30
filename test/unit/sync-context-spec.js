@@ -115,7 +115,7 @@ describe('The syncContext method', function(){
 
     });
 
-    describe('when and explicit context object is provided', function(){
+    describe('when an explicit context object is provided', function(){
 
         var proxy;
 
