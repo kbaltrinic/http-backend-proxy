@@ -84,12 +84,46 @@ proxy.when('GET', /search\?q=.*/)
 *Hint:* If we rename our in-test proxy from `proxy` to `$httpBackend`, our tests will more easily get through any linting we may have set up.
 
 When buffering is turned off, the context object is synchronized with the browser before every call to `respond()`.  When buffering is turned on, this syncronization occurs as part of the call to `flush()`.  This is important, because is it the value of the context object at the time of syncronization, not at the point when `respond()` is called on the proxy, that determines its value in the browser.  More precisely, since values in the context object may not even be evaluated in the browser until an HTTP call occurs, the value at the time of the HTTP call will be the value of the object as of the most recent prior syncronization.  Said another way, there is no closure mechanism in play here.
+When buffering is turned off, the context object is synchronized with the browser before every call to `respond()`.  When buffering is turned on, this syncronization occurs as part of the call to `flush()`.  This is important, because is it the value of the context object at the time of syncronization, not at the point when `respond()` is called on the proxy, that determines its value in the browser.  More precisely, since values in the context object may not even be evaluated in the browser until an HTTP call occurs, the value at the time of the HTTP call will be the value of the object as of the most recent prior syncronization.  Said another way, there is no closure mechanism in play here.  Because of this behavior, it is also possible to manually syncronized the context object at any time.  See below for how and why you might want to do this.
 
 ####Configuring the Context Object
-If for some reason you don't like your context object being called 'context' (or more importantly, if it should turn out to conflict with a future property of $httpBackend), it can be renamed by adding `contextField: "a-new-field-name"` to the configuration object that the proxy is constructed with.  Passing a value of `false` will disable the context passing mechanism all together.
+If for some reason you don't like your context object being called 'context' (or more importantly, if 'context' should turn out to conflict with a future property of $httpBackend), it can be renamed by adding `contextField: "a-new-field-name"` to the configuration object that the proxy is constructed with.  You can also disable the auto-syncronization of the context object described above by passing `contextAutoSync: false`.  If you do, you will need to manually invoke syncronization.
+
+####Manually Syncronizing Contexts
+The state of the context object can be syncronized manually at any time by calling `proxy.syncContext()`.  This does not flush the buffer or otherwise send any new configuration to the remote $httpBackend instance.  It simply syncronizes the state of the local and in-browser context objects.  `syncContext` returns a promise.
+
+Why do this?  Consider the above example where we have a search URL whose return value is essentially defined as context.searchResults.  If we can update the context in between tests, we can effectively cause search to return different results for each test.  This makes it easy, for example, to test for correct behavior when some, none, and more-than-expected results are returned.
+
+To avoid having to write this awkward code:
+```JavaScript
+proxy.context = {
+  searchResults: searchResults,
+  getQueryTermsFrom: function (url){  ... implemenation omitted ... };
+}
+
+proxy.when( ... );
+
+... do some tests ...
+
+proxy.context.searchResults = emptyResults;
+proxy.syncContext();
+
+... do some more tests ...
+
+//rinse, wash, repeat...
+```
+you can pass the new context directly to syncContext like so:
+```JavaScript
+proxy.syncContext({searchResults: emptyResults});
+```
+The above will *merge* the provided object with any existing context and syncronize the result.  Merging allows you to avoid respecifying the entire context object.  Calling `syncContext` in this manner also updates the instance of the context object on the local proxy as well.
+
+Note that the merge behavior only works if both the current and newly provided values are simple javascript objects.  If either value is anything but, then simple assigment is used and the value passed to `syncContext` will completely replace the prior value.  Examples of javascript objects that are not 'simple' and will not be merged are arrays, dates, regular expressions and pretty much anything created with the new keyword.  Except for arrays and regular expressions, you shouldn't be using most of these anyway as they would never be returned from an HTTP call.  The proxy would likely not correctly serialize them either.
+
+Moreover, mergning is only performed for the top-level object.  Nested objects are treated atomically and simply replaced.
 
 ###Resetting the Mock
-The underlying $httpBackend mock does not support resetting the set of configured calls.  So there is no way to do this through the proxy either.  The simplest solution is to use `browser.get()` to reload your page.  This of course resets the entire application state, not just that of the $httpBackend.  Doing so may not seem ideal but if used wisely will give you good test isolation as well resetting the proxy.
+The underlying $httpBackend mock does not support resetting the set of configured calls.  So there is no way to do this through the proxy either.  The simplest solution is to use `browser.get()` to reload your page.  This of course resets the entire application state, not just that of the $httpBackend.  Doing so may not seem ideal but if used wisely will give you good test isolation as well resetting the proxy.  Alternately, you can use the techniques described under context syncronization above to modify the mock's behavior for each test.
 
 ###Configuring the App-Under-Test
 Somewhere in the application-under-test, you need to add the following line.
