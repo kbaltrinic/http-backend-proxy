@@ -28,8 +28,9 @@ describe('The Context Object', function(){
 
 		});
 
-		it('should not forward any context to the browser', function(){
+		it('should not forward any context to the browser even if it exists', function(){
 
+			proxy.context = 'I exist!';
 			proxy.whenGET('/someURL').respond(200);
 
 			expect(browser.executeScript.calls[0].args[0]).not.toContain(
@@ -60,8 +61,9 @@ describe('The Context Object', function(){
 
 		});
 
-		it('should still not forward any context to the browser', function(){
+		it('should still not forward any context to the browser even if it exists', function(){
 
+			proxy.context = 'I exist!';
 			proxy.whenGET('/someURL').respond(200);
 
 			expect(browser.executeScript.calls[0].args[0]).not.toContain(

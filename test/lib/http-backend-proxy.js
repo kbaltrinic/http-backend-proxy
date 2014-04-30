@@ -105,9 +105,11 @@ module.exports = function(browser, options){
 
   function getContextDefinitionScript(context){
 
-    context = context || proxy[options.contextField]
+    if(options.contextAutoSync){
+      context = context || proxy[options.contextField];
+    }
 
-    if(context){
+    if(typeof(context) !== 'undefined'){
       return 'window.$httpBackend.' + options.contextField + '=' + stringifyObject(context) + ';';
     } else {
       return '';
