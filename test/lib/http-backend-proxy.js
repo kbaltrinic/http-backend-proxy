@@ -18,6 +18,57 @@ module.exports = function(browser, options){
     this[options.contextField] = {};
   }
 
+  createMethods(this, 'when', buildWhenFunction);
+
+  function createMethods(proxy, prefix, functionBuilder) {
+    ['', 'GET', 'PUT', 'HEAD', 'POST', 'DELETE', 'PATCH', 'JSONP'].forEach(function(method) {
+     proxy[prefix + method] = functionBuilder(prefix + method);
+    });
+  }
+
+  function buildWhenFunction(funcName){
+
+    return function(){
+
+      var whenJS = 'window.$httpBackend.' + funcName + '(' + stringifyArgs(arguments) + ')';
+
+      return {
+        respond: function() {
+
+          var fullJS = whenJS +'.respond(' + stringifyArgs(arguments) + ');'
+
+          return executeOrBuffer(fullJS);
+        },
+        passThrough: function() {
+          return executeOrBuffer(whenJS +'.passThrough(' + stringifyArgs(arguments) + ');');
+        }
+      };
+
+    };
+
+  };
+
+  function executeOrBuffer(script){
+    if(options.buffer){
+      buffer.push(script);
+    } else {
+      script = getContextDefinitionScript() + script;
+      return browser.executeScript(script);
+    }
+  }
+
+  this.flush = function(){
+    if(buffer.length > 0){
+      var script = getContextDefinitionScript() + buffer.join('\n');
+      buffer = [];
+      return browser.executeScript(script);
+    } else {
+      var deferred = protractor.promise.defer();
+      deferred.promise.complete();
+      return deferred.promise;
+    }
+  }
+
   function stringifyArgs(args){
     var i, s = [];
     for(i = 0; i < args.length; i++){
@@ -26,12 +77,12 @@ module.exports = function(browser, options){
     return s.join(', ');
   }
 
-  function executeOrBuffer(script){
-    if(options.buffer){
-      buffer.push(script);
+  function getContextDefinitionScript(){
+
+    if(typeof(options.contextField) == 'string'){
+      return 'window.$httpBackend.' + options.contextField + '=' + stringifyObject(proxy[options.contextField]) + ';';
     } else {
-      script = getContextDefinitionScript() + script;
-      return browser.executeScript(script);
+      return '';
     }
   }
 
@@ -58,56 +109,5 @@ module.exports = function(browser, options){
     return JSON.stringify(obj);
 
   }
-
-  function getContextDefinitionScript(){
-
-    if(typeof(options.contextField) == 'string'){
-      return 'window.$httpBackend.' + options.contextField + '=' + stringifyObject(proxy[options.contextField]) + ';';
-    } else {
-      return '';
-    }
-  }
-
-  this.flush = function(){
-    if(buffer.length > 0){
-      var script = getContextDefinitionScript() + buffer.join('\n');
-      buffer = [];
-      return browser.executeScript(script);
-    } else {
-      var deferred = protractor.promise.defer();
-      deferred.promise.complete();
-      return deferred.promise;
-    }
-  }
-
-  function createMethods(proxy, prefix, functionBuilder) {
-    ['', 'GET', 'PUT', 'HEAD', 'POST', 'DELETE', 'PATCH', 'JSONP'].forEach(function(method) {
-     proxy[prefix + method] = functionBuilder(prefix + method);
-    });
-  }
-
-  createMethods(this, 'when', buildWhenFunction);
-
-  function buildWhenFunction(funcName){
-
-    return function(){
-
-      var whenJS = 'window.$httpBackend.' + funcName + '(' + stringifyArgs(arguments) + ')';
-
-      return {
-        respond: function() {
-
-          var fullJS = whenJS +'.respond(' + stringifyArgs(arguments) + ');'
-
-          return executeOrBuffer(fullJS);
-        },
-        passThrough: function() {
-          return executeOrBuffer(whenJS +'.passThrough(' + stringifyArgs(arguments) + ');');
-        }
-      };
-
-    };
-
-  };
 
 };
