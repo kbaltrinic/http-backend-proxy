@@ -123,6 +123,8 @@ Note that the merge behavior only works if both the current and newly provided v
 
 Moreover, merging is only performed for the top-level object.  Nested objects are treated atomically and simply replaced.
 
+If any of this is confusing the [syncContext unit tests](https://github.com/kbaltrinic/http-backend-proxy/blob/master/test/unit/sync-context-spec.js) may help clear it up and give detailed examples of the behavior.
+
 ###Resetting the Mock
 The underlying $httpBackend mock does not support resetting the set of configured calls.  So there is no way to do this through the proxy either.  The simplest solution is to use `browser.get()` to reload your page.  This of course resets the entire application state, not just that of the $httpBackend.  Doing so may not seem ideal but if used wisely will give you good test isolation as well resetting the proxy.  Alternately, you can use the techniques described under context synchronization above to modify the mock's behavior for each test.
 
