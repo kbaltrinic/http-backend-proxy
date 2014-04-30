@@ -75,6 +75,26 @@ describe('The syncContext method', function(){
         });
     });
 
+    describe('when an alternative context field name has been configured', function(){
+
+        var proxy;
+
+        beforeEach(function () {
+
+            proxy = new HttpBackend(browser, {contextField: 'alternative'});
+            proxy.alternative = 'alternativeContext';
+            proxy.syncContext();
+
+        });
+
+        it('should syncronize the context object to the browser', function(){
+
+            expect(browser.executeScript).toHaveBeenCalledWith(
+                'window.$httpBackend.alternative="alternativeContext";');
+
+        });
+    });
+
     describe('when the context object is disabled', function(){
 
         var proxy;
@@ -120,7 +140,7 @@ describe('The syncContext method', function(){
 
         });
 
-        describe('and an alternative context field name is used', function(){
+        describe('and an alternative context field name was configured', function(){
 
             beforeEach(function () {
 
