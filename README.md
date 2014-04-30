@@ -1,7 +1,7 @@
 #$httpBackend Proxy
 [![Build Status](https://travis-ci.org/kbaltrinic/http-backend-proxy.svg?branch=master)](https://travis-ci.org/kbaltrinic/http-backend-proxy)
 
-This is a node module for use with the [AngularJS Protractor][protractor] end-to-end testing framework.  It allows you to make configuration calls to [$httpBackend][httpBackend] from within Protractor itself.  Being able to configuring the mock backend along side the tests that depend upon it improves the modularity, encapsulation and flexibility of your tests.  The proxy allows $httpBackend to live up to its full potential, making it easier to test angular web applications in abstraction from their backend services.
+This is a node module for use with the [AngularJS Protractor][protractor] end-to-end testing framework.  It allows you to make configuration calls to [$httpBackend][httpBackend] from within Protractor itself as well as share data and functions between the test environment and the browser.  Being able to configuring the mock back end along side the tests that depend upon it improves the modularity, encapsulation and flexibility of your tests.  The proxy allows $httpBackend to live up to its full potential, making it easier to test angular web applications in abstraction from their back end services.
 
 ### Credits
 The proxy itself is my own work.  However much of the test application and project structure, etc. is based off of [the angular-seed project][angular-seed].  This includes significant parts of this README.
@@ -218,7 +218,7 @@ npm run test-watch
 
 This will watch both the `test/unit` and `test/lib` directories.
 
-### Running the End-to-End Testing
+### Running the End-to-End Tests
 
 The project comes with end-to-end tests, again written in [Jasmine][jasmine]. These tests
 are run using Protractor.  They also demonstrate how to actually use the proxy to manipulate $httpBackend in your tests.  I recommend taking a look.
