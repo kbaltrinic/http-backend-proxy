@@ -148,13 +148,10 @@ There are three kinds of dependencies in this project: tools, angular framework 
 * We get the angular code via `bower`, a [client-side code package manager][bower].
 * I added `bootstrap.css` as a hard-coded dependency under `app/css` just to make the test harness look nice. :-)  Strictly speaking it is not needed.
 
-`npm` is preconfigured to automatically run `bower` so you can simply do:
+None of these dependencies are needed for http-backend-proxy itself.  They are only needed for the test harness.  Thus the project is configured to only install the npm dependencies if you specify the `--dev' option on your `npm install` command.  Likewise, the bower dependencies are installed when you do `npm run` (below) to start the test harness for the first time.
 
-```
-npm install
-```
 
-Behind the scenes this will also call `bower install`.  You should find that you have two new
+Once the node (npm) modules and bower moduels are installed, you should find that you have two new
 folders in your project.
 
 * `node_modules` - contains the npm packages for the tools we need
@@ -162,7 +159,7 @@ folders in your project.
 
 #### Run the Test Harness
 
-The project is preconfigured with a simple development web server.  The simplest way to start
+The project is preconfigured with a simple development web server to host the test harness.  The simplest way to start
 this server is:
 
 ```

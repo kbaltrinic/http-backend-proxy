@@ -19,9 +19,8 @@
     "node": ">=0.10.0"
   },
     "scripts": {
-    "postinstall": "bower install",
 
-    "start": "http-server -p 8000",
+    "start": "bower install && http-server -p 8000",
     "test": "jasmine-node test/unit/",
     "test-watch": "jasmine-node --autotest --watch test/lib/ --color test/unit/",
 
