@@ -138,6 +138,8 @@ The `module.run()` block of your top-level application module is probably the be
 
 The angular application that makes up most of this repository is simply a test harness for the proxy.  It enables testing the proxy by way of Protractor.  However it can also be used to manually tests the 'hard-coded' $httpBackend configuration set up in `app.js`.  Manual testing can useful for debugging problems during proxy development.
 
+Chance are, unless you plan to contribute to the development of http-backend-proxy, you will never need to load the test harness and can safely skip this section.
+
 ###Setup
 
 #### Install Dependencies
@@ -148,7 +150,7 @@ There are three kinds of dependencies in this project: tools, angular framework 
 * We get the angular code via `bower`, a [client-side code package manager][bower].
 * I added `bootstrap.css` as a hard-coded dependency under `app/css` just to make the test harness look nice. :-)  Strictly speaking it is not needed.
 
-None of these dependencies are needed for http-backend-proxy itself.  They are only needed for the test harness.  Thus the project is configured to only install the npm dependencies if you specify the `--dev' option on your `npm install` command.  Likewise, the bower dependencies are installed when you do `npm run` (below) to start the test harness for the first time.
+None of these dependencies are needed for http-backend-proxy itself.  They are only needed for the test harness.  Thus the project is configured to only install the npm dependencies if you specify the `--dev` option on your `npm install` command.  Likewise, the bower dependencies are installed when you do `npm run` (below) to start the test harness for the first time.
 
 
 Once the node (npm) modules and bower moduels are installed, you should find that you have two new
