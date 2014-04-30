@@ -11,13 +11,20 @@ module.exports = function(browser, options){
 
   options || (options = {});
   options.buffer || (options.buffer = false);
-  options.contextEnabled = typeof(options.contextField) === 'undefined' || typeof(options.contextField) === 'string';
-  options.contextField = (options.contextEnabled &&  options.contextField) ?  options.contextField : DEFAULT_CONTEXT_FIELD_NAME;
+
+  //This is for backward compatibility since we changed the API from 1.1.1 to 1.2
+  if(options.contextField === false){
+    console.warn("Setting contextField: false is deprected.  Set contextAutoSync: false instead.");
+    options.contextAutoSync = false;
+  }
+
+  options.contextAutoSync = typeof(options.contextAutoSync) === 'undefined' || !!options.contextAutoSync;
+  options.contextField || (options.contextField = DEFAULT_CONTEXT_FIELD_NAME);
 
   var proxy = this;
   var buffer = [];
 
-  if(options.contextEnabled){
+  if(options.contextAutoSync){
     this[options.contextField] = {};
   }
 
@@ -74,7 +81,7 @@ module.exports = function(browser, options){
 
   this.syncContext = function(context){
 
-    if(options.contextEnabled){
+    if(options.contextAutoSync){
       if(context){
          proxy[options.contextField] = context;
       }

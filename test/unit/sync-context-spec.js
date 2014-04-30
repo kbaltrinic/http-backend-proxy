@@ -95,13 +95,13 @@ describe('The syncContext method', function(){
         });
     });
 
-    describe('when the context object is disabled', function(){
+    describe('when auto-syncronization of the context object is disabled', function(){
 
         var proxy;
 
         beforeEach(function () {
 
-            proxy = new HttpBackend(browser, {contextField: false});
+            proxy = new HttpBackend(browser, {contextAutoSync: false});
             proxy.context = 'myContext';
             proxy.syncContext();
 
@@ -166,12 +166,12 @@ describe('The syncContext method', function(){
 
         });
 
-        describe('and the context object has been disabled', function(){
+        describe('and auto-syncronization of the context object has been disabled', function(){
 
             beforeEach(function () {
 
                 browser.executeScript.reset();
-                proxy = new HttpBackend(browser, {contextField: false});
+                proxy = new HttpBackend(browser, {contextAutoSync: false});
                 proxy.context = 'myContext';
                 proxy.syncContext('anotherContext');
 

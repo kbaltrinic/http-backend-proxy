@@ -14,11 +14,11 @@ describe('The Context Object', function(){
 
 	});
 
-	describe('when disabled', function(){
+	describe('when auto-syncronization is disabled', function(){
 
 		beforeEach(function () {
 
-			proxy = new HttpBackend(browser, {contextField: false});
+			proxy = new HttpBackend(browser, {contextAutoSync: false});
 
 		});
 
@@ -29,6 +29,38 @@ describe('The Context Object', function(){
 		});
 
 		it('should not forward any context to the browser', function(){
+
+			proxy.whenGET('/someURL').respond(200);
+
+			expect(browser.executeScript.calls[0].args[0]).not.toContain(
+				'window.$httpBackend.context=');
+
+		});
+
+	});
+
+	describe('when auto-syncronization is disabled the deprecated way', function(){
+
+		beforeEach(function () {
+
+			spyOn(console, 'warn');
+			proxy = new HttpBackend(browser, {contextField: false});
+
+		});
+
+		it('should warn the developer', function(){
+
+			expect(console.warn).toHaveBeenCalled();
+
+		});
+
+		it('should still not initialize the context object', function(){
+
+			expect(proxy.context).not.toBeDefined();
+
+		});
+
+		it('should still not forward any context to the browser', function(){
 
 			proxy.whenGET('/someURL').respond(200);
 
