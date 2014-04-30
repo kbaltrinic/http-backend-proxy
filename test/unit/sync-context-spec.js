@@ -1,28 +1,34 @@
 'use strict';
 
 var HttpBackend = require('../lib/http-backend-proxy');
+var Browser = require('./helpers/protractor-browser')
 
 describe('The syncContext method', function(){
 
     var browser;
 
     beforeEach(function () {
+        browser = new Browser();
+    });
 
-        browser = { executeScript: function(){} };
-        spyOn(browser, 'executeScript');
-
+    afterEach(function () {
+        browser.cleanUp();
     });
 
     describe('when buffering is off', function(){
 
-        var proxy;
+        var proxy, returnValue;
 
         beforeEach(function () {
 
             proxy = new HttpBackend(browser, {buffer: false});
             proxy.context = 'myContext';
-            proxy.syncContext();
+            returnValue = proxy.syncContext();
 
+        });
+
+        it('should return a pending promise', function(){
+            expect(returnValue.isComplete).toEqual(false);
         });
 
         it('should syncronize the context object to the browser', function(){
@@ -31,7 +37,6 @@ describe('The syncContext method', function(){
                 'window.$httpBackend.context="myContext";');
 
         });
-
 
         it('should not do anything else', function(){
 
@@ -42,15 +47,19 @@ describe('The syncContext method', function(){
 
     describe('when buffering is on', function(){
 
-        var proxy;
+        var proxy, returnValue;
 
         beforeEach(function () {
 
             proxy = new HttpBackend(browser, {buffer: true});
             proxy.whenGET(/.*/).respond(200);
             proxy.context = 'myContext';
-            proxy.syncContext();
+            returnValue = proxy.syncContext();
 
+        });
+
+        it('should return a pending promise', function(){
+            expect(returnValue.isComplete).toEqual(false);
         });
 
         it('should syncronize the context object to the browser', function(){
