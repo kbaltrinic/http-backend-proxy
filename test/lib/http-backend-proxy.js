@@ -69,7 +69,12 @@ module.exports = function(browser, options){
     }
   }
 
-  this.syncContext = function(){
+  this.syncContext = function(context){
+
+    if(context){
+      proxy[options.contextField] = context;
+    }
+
     return browser.executeScript(getContextDefinitionScript());
   }
 

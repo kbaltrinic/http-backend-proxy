@@ -75,4 +75,56 @@ describe('The syncContext method', function(){
         });
     });
 
+    describe('when and explicit context object is provided', function(){
+
+        var proxy;
+
+        beforeEach(function () {
+
+            proxy = new HttpBackend(browser, {buffer: true});
+            proxy.context = 'myContext';
+            proxy.syncContext('anotherContext');
+
+        });
+
+        it('should syncronize the provided context object to the browser', function(){
+
+            expect(browser.executeScript).toHaveBeenCalledWith(
+                'window.$httpBackend.context="anotherContext";');
+
+        });
+
+        it('should update the local context object', function(){
+
+            expect(proxy.context).toEqual('anotherContext');
+
+        });
+
+        describe('and an alternative context field name is used', function(){
+
+            beforeEach(function () {
+
+                proxy = new HttpBackend(browser, {buffer: true, contextField: 'alternate'});
+                proxy.alternate = 'myContext';
+                proxy.syncContext('anotherContext');
+
+            });
+
+            it('should syncronize the provided context object to the browser', function(){
+
+                expect(browser.executeScript).toHaveBeenCalledWith(
+                    'window.$httpBackend.alternate="anotherContext";');
+
+            });
+
+            it('should update the local context object', function(){
+
+                expect(proxy.alternate).toEqual('anotherContext');
+
+            });
+
+        });
+
+    });
+
 });
