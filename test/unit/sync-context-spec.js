@@ -102,14 +102,20 @@ describe('The syncContext method', function(){
         beforeEach(function () {
 
             proxy = new HttpBackend(browser, {contextAutoSync: false});
-            proxy.context = 'myContext';
             proxy.syncContext();
 
         });
 
-        it('should not syncronize the context object to the browser', function(){
+        it('should create the context object on the local proxy', function(){
 
-            expect(browser.executeScript).not.toHaveBeenCalled();
+            expect(proxy.context).toEqual({});
+
+        });
+
+        it('should syncronize the context object to the browser', function(){
+
+            expect(browser.executeScript).toHaveBeenCalledWith(
+                'window.$httpBackend.context={};');
 
         });
 
@@ -172,7 +178,6 @@ describe('The syncContext method', function(){
 
                 browser.executeScript.reset();
                 proxy = new HttpBackend(browser, {contextAutoSync: false});
-                proxy.context = 'myContext';
                 proxy.syncContext('anotherContext');
 
             });
@@ -184,9 +189,9 @@ describe('The syncContext method', function(){
 
             });
 
-            it('should not update any local fields', function(){
+            it('should update any local fields', function(){
 
-                expect(proxy.context).toEqual('myContext');
+                expect(proxy.context).toEqual('anotherContext');
 
             });
 

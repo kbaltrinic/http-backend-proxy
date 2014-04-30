@@ -81,15 +81,17 @@ module.exports = function(browser, options){
 
   this.syncContext = function(context){
 
-    if(options.contextAutoSync){
-      if(context){
-         proxy[options.contextField] = context;
+    if(typeof(context) !== 'undefined'){
+
+      proxy[options.contextField] = context;
+
+    } else {
+
+      if(typeof(proxy[options.contextField]) === 'undefined'){
+        proxy[options.contextField] = {};
       }
-      else{
-        context =  proxy[options.contextField];
-      }
-    } else if ( typeof(context) === 'undefined' ) {
-      return;
+
+      context =  proxy[options.contextField];
     }
 
     return browser.executeScript(getContextDefinitionScript(context));
