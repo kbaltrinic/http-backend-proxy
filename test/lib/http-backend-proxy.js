@@ -7,14 +7,17 @@
 
 module.exports = function(browser, options){
 
+  var DEFAULT_CONTEXT_FIELD_NAME = 'context';
+
   options || (options = {});
   options.buffer || (options.buffer = false);
-  typeof(options.contextField) !== 'undefined' || (options.contextField = 'context');
+  options.contextEnabled = typeof(options.contextField) === 'undefined' || typeof(options.contextField) === 'string';
+  options.contextField = (options.contextEnabled &&  options.contextField) ?  options.contextField : DEFAULT_CONTEXT_FIELD_NAME;
 
   var proxy = this;
   var buffer = [];
 
-  if(typeof(options.contextField) == 'string'){
+  if(options.contextEnabled){
     this[options.contextField] = {};
   }
 
@@ -71,7 +74,7 @@ module.exports = function(browser, options){
 
   this.syncContext = function(context){
 
-    if(typeof(options.contextField) == 'string'){
+    if(options.contextEnabled){
       if(context){
          proxy[options.contextField] = context;
       }
@@ -98,7 +101,7 @@ module.exports = function(browser, options){
     context = context || proxy[options.contextField]
 
     if(context){
-      return 'window.$httpBackend.' + (options.contextField || 'context') + '=' + stringifyObject(context) + ';';
+      return 'window.$httpBackend.' + options.contextField + '=' + stringifyObject(context) + ';';
     } else {
       return '';
     }
