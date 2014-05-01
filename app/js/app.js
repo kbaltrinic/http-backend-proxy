@@ -4,7 +4,8 @@
 // Declare app level module which depends on filters, and services
 angular.module('app', [
   'ngMockE2E'
-]).controller('appCtrl', ['$scope', '$http', function($scope, $http) {
+]).value()
+.controller('appCtrl', ['$scope', '$http', function($scope, $http) {
 
 	$scope.version = angular.version;
 
@@ -28,6 +29,16 @@ angular.module('app', [
 		}
 	});
 
+	if($scope.$root.initialRequest){
+		$scope.request = angular.extend($scope.request, $scope.$root.initialRequest.request);
+		$scope.$root.$watch('initialRequest.response', function(){
+			var response = $scope.$root.initialRequest.response;
+			if(response){
+				recordResponse(response.data, response.status, response.headers);
+			}
+		});
+	}
+
 	$scope.call = function(){
 
 		delete $scope.response;
@@ -43,25 +54,25 @@ angular.module('app', [
 			request.headers[header[1]] = header[2];
 		}
 
-		function recordResponse(data, status, headers) {
-
-			headers = headers ? headers() : undefined;
-			$scope.rawResponse = {
-				data: data,
-				headers: headers
-			};
-
-			$scope.response = {
-				data: format(data),
-				status: status,
-				headers: format(headers)
-			};
-		}
-
 		$http(request).success(recordResponse).error(recordResponse);
 	};
 
-}]).run(function($httpBackend) {
+	function recordResponse(data, status, headers) {
+
+		headers = headers ? headers() : undefined;
+		$scope.rawResponse = {
+			data: data,
+			headers: headers
+		};
+
+		$scope.response = {
+			data: format(data),
+			status: status,
+			headers: format(headers)
+		};
+	}
+
+}]).run(function($httpBackend, $window, $rootScope, $http) {
 
 	//Must expose this so that it is accessible to remotely invoked javascript.
 	window.$httpBackend = $httpBackend
@@ -76,4 +87,31 @@ angular.module('app', [
     	404,
     	"You called /missing",
     	{'test-header': 'failed'});
+
+	if($window.location.search.length > 1){
+		var request;
+		try{
+			request = JSON.parse(decodeURI($window.location.search.substring(1)));
+		} catch (ex) {
+			console.log(ex);
+		}
+
+		if(request){
+			$rootScope.initialRequest = { request: request };
+
+			$http(request).success(function(data, status, headers){
+				$rootScope.initialRequest.response = {
+					data: data,
+					status: status,
+					headers: headers
+				};
+			}).error(function(data, status, headers){
+				$rootScope.initialRequest.response = {
+					data: data,
+					status: status,
+					headers: headers
+				};
+			});
+		}
+	}
 });
