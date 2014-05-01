@@ -24,9 +24,7 @@ module.exports = function(browser, options){
   var proxy = this;
   var buffer = [];
 
-  if(options.contextAutoSync){
-    this[options.contextField] = {};
-  }
+  this[options.contextField] = {};
 
   createMethods(this, 'when', buildWhenFunction);
 

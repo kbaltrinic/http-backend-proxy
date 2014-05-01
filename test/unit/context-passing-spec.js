@@ -22,9 +22,9 @@ describe('The Context Object', function(){
 
 		});
 
-		it('should not initialize the context object', function(){
+		it('should still initialize the context object', function(){
 
-			expect(proxy.context).not.toBeDefined();
+			expect(proxy.context).toEqual({});
 
 		});
 
@@ -55,9 +55,9 @@ describe('The Context Object', function(){
 
 		});
 
-		it('should still not initialize the context object', function(){
+		it('should still initialize the context object', function(){
 
-			expect(proxy.context).not.toBeDefined();
+			expect(proxy.context).toEqual({});
 
 		});
 
