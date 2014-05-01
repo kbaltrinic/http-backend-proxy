@@ -5,7 +5,7 @@
  */
 'use strict';
 
-module.exports = function(browser, options){
+var Proxy = function(browser, options){
 
   var DEFAULT_CONTEXT_FIELD_NAME = 'context';
 
@@ -157,3 +157,5 @@ module.exports = function(browser, options){
   }
 
 };
+
+module.exports = Proxy;
