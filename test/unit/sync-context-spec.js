@@ -33,8 +33,8 @@ describe('The syncContext method', function(){
 
         it('should syncronize the context object to the browser', function(){
 
-            expect(browser.executeScript).toHaveBeenCalledWith(
-                'window.$httpBackend.context="myContext";');
+            expect(browser.executeScript.calls[0].args[0]).toContain(
+                '$httpBackend.context="myContext";');
 
         });
 
@@ -64,8 +64,8 @@ describe('The syncContext method', function(){
 
         it('should syncronize the context object to the browser', function(){
 
-            expect(browser.executeScript).toHaveBeenCalledWith(
-                'window.$httpBackend.context="myContext";');
+            expect(browser.executeScript.calls[0].args[0]).toContain(
+                '$httpBackend.context="myContext";');
 
         });
 
@@ -98,8 +98,8 @@ describe('The syncContext method', function(){
 
         it('should syncronize the alternative context object to the browser', function(){
 
-            expect(browser.executeScript).toHaveBeenCalledWith(
-                'window.$httpBackend.alternative="alternativeContext";');
+            expect(browser.executeScript.calls[0].args[0]).toContain(
+                '$httpBackend.alternative="alternativeContext";');
 
         });
     });
@@ -117,8 +117,8 @@ describe('The syncContext method', function(){
 
         it('should syncronize the context object to the browser', function(){
 
-            expect(browser.executeScript).toHaveBeenCalledWith(
-                'window.$httpBackend.context={};');
+            expect(browser.executeScript.calls[0].args[0]).toContain(
+                '$httpBackend.context={};');
 
         });
 
@@ -144,8 +144,8 @@ describe('The syncContext method', function(){
 
         it('should syncronize the context object to the browser', function(){
 
-            expect(browser.executeScript).toHaveBeenCalledWith(
-                'window.$httpBackend.context={};');
+            expect(browser.executeScript.calls[0].args[0]).toContain(
+                '$httpBackend.context={};');
 
         });
 
@@ -167,8 +167,8 @@ describe('The syncContext method', function(){
 
             it('should syncronize the merged context object to the browser', function(){
 
-                expect(browser.executeScript).toHaveBeenCalledWith(
-                    'window.$httpBackend.context={"value1":"old1","value2":"new2","value3":"new3"};');
+                expect(browser.executeScript.calls[0].args[0]).toContain(
+                    '$httpBackend.context={"value1":"old1","value2":"new2","value3":"new3"};');
 
             });
 
@@ -195,8 +195,8 @@ describe('The syncContext method', function(){
 
             it('should syncronize the new context object to the browser', function(){
 
-                expect(browser.executeScript).toHaveBeenCalledWith(
-                    'window.$httpBackend.context=/a regex/;');
+                expect(browser.executeScript.calls[0].args[0]).toContain(
+                    '$httpBackend.context=/a regex/;');
 
             });
 
@@ -224,8 +224,8 @@ describe('The syncContext method', function(){
 
             it('should syncronize the new context object to the browser', function(){
 
-                expect(browser.executeScript).toHaveBeenCalledWith(
-                    'window.$httpBackend.context={"aNew":"value"};');
+                expect(browser.executeScript.calls[0].args[0]).toContain(
+                    '$httpBackend.context={"aNew":"value"};');
 
             });
 
@@ -251,8 +251,8 @@ describe('The syncContext method', function(){
 
             it('should syncronize the provided context object to the browser', function(){
 
-                expect(browser.executeScript).toHaveBeenCalledWith(
-                    'window.$httpBackend.alternate="anotherContext";');
+                expect(browser.executeScript.calls[0].args[0]).toContain(
+                    '$httpBackend.alternate="anotherContext";');
 
             });
 
@@ -277,8 +277,8 @@ describe('The syncContext method', function(){
 
             it('should syncronize the provided context object to the browser using the default field name', function(){
 
-                expect(browser.executeScript).toHaveBeenCalledWith(
-                    'window.$httpBackend.context="anotherContext";');
+                expect(browser.executeScript.calls[0].args[0]).toContain(
+                    '$httpBackend.context="anotherContext";');
 
             });
 

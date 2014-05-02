@@ -158,14 +158,6 @@ Again, [looking at the tests](https://github.com/kbaltrinic/http-backend-proxy/b
 ###Resetting the Mock
 The underlying $httpBackend mock does not support resetting the set of configured calls.  So there is no way to do this through the proxy either.  The simplest solution is to use `browser.get()` to reload your page.  This of course resets the entire application state, not just that of the $httpBackend.  Doing so may not seem ideal but if used wisely will give you good test isolation as well resetting the proxy.  Alternately, you can use the techniques described under context synchronization above to modify the mock's behavior for each test.
 
-###Configuring the App-Under-Test
-Somewhere in the application-under-test, you need to add the following line.
-
-```JavaScript
-window.$httpBackend = $httpBackend;
-```
-The `module.run()` block of your top-level application module is probably the best place to put this.  This exposes $httpBackend globally so that it becomes accessible to the proxy.  _If anyone has ideas on how to avoid needing this, please let me know._
-
 ## The Test-Harness Application
 
 The angular application that makes up most of this repository is simply a test harness for the proxy.  It enables testing the proxy by way of Protractor.  However it can also be used to manually tests the 'hard-coded' $httpBackend configuration set up in `app.js`.  Manual testing can useful for debugging problems during proxy development.

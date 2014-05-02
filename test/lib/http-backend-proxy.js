@@ -36,7 +36,7 @@ var Proxy = function(browser, options){
 
     return function(){
 
-      var whenJS = 'window.$httpBackend.' + funcName + '(' + stringifyArgs(arguments) + ')';
+      var whenJS = '$httpBackend.' + funcName + '(' + stringifyArgs(arguments) + ')';
 
       return {
         respond: function() {
@@ -58,9 +58,16 @@ var Proxy = function(browser, options){
     if(options.buffer){
       buffer.push(script);
     } else {
-      script = getContextDefinitionScript() + script;
+      script = wrapScriptWithinInjectorInvoke(getContextDefinitionScript() + script);
       return browser.executeScript(script);
     }
+  }
+
+  function wrapScriptWithinInjectorInvoke(script){
+    return '\
+      var el = document.querySelector("' + browser.rootEl + '");\
+      angular.element(el).injector().invoke(function($httpBackend){\
+      ' + script + '});';
   }
 
   if(arguments.length < 3){
@@ -69,7 +76,7 @@ var Proxy = function(browser, options){
 
     this.flush = function(){
       if(buffer.length > 0){
-        var script = getContextDefinitionScript() + buffer.join('\n');
+        var script = wrapScriptWithinInjectorInvoke(getContextDefinitionScript() + buffer.join('\n'));
         buffer = [];
         return browser.executeScript(script);
       } else {
@@ -110,7 +117,9 @@ var Proxy = function(browser, options){
         context =  proxy[options.contextField];
       }
 
-      return browser.executeScript(getContextDefinitionScript(context));
+      return browser.executeScript(
+        wrapScriptWithinInjectorInvoke(
+          getContextDefinitionScript(context)));
     }
 
     var onLoad;
@@ -168,7 +177,7 @@ var Proxy = function(browser, options){
     }
 
     if(typeof(context) !== 'undefined'){
-      return 'window.$httpBackend.' + options.contextField + '=' + stringifyObject(context) + ';';
+      return '$httpBackend.' + options.contextField + '=' + stringifyObject(context) + ';';
     } else {
       return '';
     }

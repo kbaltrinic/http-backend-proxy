@@ -31,26 +31,26 @@ describe('Shortcut Method JavaScript Generation', function(){
 
 				it('should generate the correct JavaScript when called with a url only.', function () {
 					methodUnderTest('/url').passThrough();
-					expect(browser.executeScript).toHaveBeenCalledWith(
-						'window.$httpBackend.' + methodName + '("/url").passThrough();');
+					expect(browser.executeScript.calls[0].args[0]).toContain(
+						'$httpBackend.' + methodName + '("/url").passThrough();');
 				});
 
 				it('should generate the correct JavaScript when called with a url function.', function () {
 					methodUnderTest(function(url){return url.indexOf('/api') == 0;}).passThrough();
-					expect(browser.executeScript).toHaveBeenCalledWith(
-						'window.$httpBackend.' + methodName + '(function (url){return url.indexOf(\'/api\') == 0;}).passThrough();');
+					expect(browser.executeScript.calls[0].args[0]).toContain(
+						'$httpBackend.' + methodName + '(function (url){return url.indexOf(\'/api\') == 0;}).passThrough();');
 				});
 
 				it('should generate the correct JavaScript when called with a url regex.', function () {
 					methodUnderTest(/\/url/i).passThrough();
-					expect(browser.executeScript).toHaveBeenCalledWith(
-						'window.$httpBackend.' + methodName + '(/\\/url/i).passThrough();');
+					expect(browser.executeScript.calls[0].args[0]).toContain(
+						'$httpBackend.' + methodName + '(/\\/url/i).passThrough();');
 				});
 
 				it('should generate the correct JavaScript when called with a url and headers', function () {
 					methodUnderTest('/url', {header:'value'}).passThrough();
-					expect(browser.executeScript).toHaveBeenCalledWith(
-						'window.$httpBackend.' + methodName + '("/url", {"header":"value"}).passThrough();');
+					expect(browser.executeScript.calls[0].args[0]).toContain(
+						'$httpBackend.' + methodName + '("/url", {"header":"value"}).passThrough();');
 				});
 
 			});
@@ -73,44 +73,44 @@ describe('Shortcut Method JavaScript Generation', function(){
 
 				it('should generate the correct JavaScript when called with a url only.', function () {
 					methodUnderTest('/url').passThrough();
-					expect(browser.executeScript).toHaveBeenCalledWith(
-						'window.$httpBackend.' + methodName + '("/url").passThrough();');
+					expect(browser.executeScript.calls[0].args[0]).toContain(
+						'$httpBackend.' + methodName + '("/url").passThrough();');
 				});
 
 				it('should generate the correct JavaScript when called with a url function.', function () {
 					methodUnderTest(function(url){return url.indexOf('/api') == 0;}).passThrough();
-					expect(browser.executeScript).toHaveBeenCalledWith(
-						'window.$httpBackend.' + methodName + '(function (url){return url.indexOf(\'/api\') == 0;}).passThrough();');
+					expect(browser.executeScript.calls[0].args[0]).toContain(
+						'$httpBackend.' + methodName + '(function (url){return url.indexOf(\'/api\') == 0;}).passThrough();');
 				});
 
 				it('should generate the correct JavaScript when called with a url regex.', function () {
 					methodUnderTest(/\/url/i).passThrough();
-					expect(browser.executeScript).toHaveBeenCalledWith(
-						'window.$httpBackend.' + methodName + '(/\\/url/i).passThrough();');
+					expect(browser.executeScript.calls[0].args[0]).toContain(
+						'$httpBackend.' + methodName + '(/\\/url/i).passThrough();');
 				});
 
 				it('should generate the correct JavaScript when called with a url and data object.', function () {
 					methodUnderTest('/url', {key:'value'}).passThrough();
-					expect(browser.executeScript).toHaveBeenCalledWith(
-						'window.$httpBackend.' + methodName + '("/url", {"key":"value"}).passThrough();');
+					expect(browser.executeScript.calls[0].args[0]).toContain(
+						'$httpBackend.' + methodName + '("/url", {"key":"value"}).passThrough();');
 				});
 
 				it('should generate the correct JavaScript when called with a url and data regex.', function () {
 					methodUnderTest('/url', /pattern/g).passThrough();
-					expect(browser.executeScript).toHaveBeenCalledWith(
-						'window.$httpBackend.' + methodName + '("/url", /pattern/g).passThrough();');
+					expect(browser.executeScript.calls[0].args[0]).toContain(
+						'$httpBackend.' + methodName + '("/url", /pattern/g).passThrough();');
 				});
 
 				it('should generate the correct JavaScript when called with a url, data and headers object.', function () {
 					methodUnderTest('/url', 'string data', {header:'value'}).passThrough();
-					expect(browser.executeScript).toHaveBeenCalledWith(
-						'window.$httpBackend.' + methodName + '("/url", "string data", {"header":"value"}).passThrough();');
+					expect(browser.executeScript.calls[0].args[0]).toContain(
+						'$httpBackend.' + methodName + '("/url", "string data", {"header":"value"}).passThrough();');
 				});
 
 				it('should generate the correct JavaScript when called with a url, data and headers function.', function () {
 					methodUnderTest('/url', 'string data', function(headers){return !!headers.my-header;}).passThrough();
-					expect(browser.executeScript).toHaveBeenCalledWith(
-						'window.$httpBackend.' + methodName + '("/url", "string data", function (headers){return !!headers.my-header;}).passThrough();');
+					expect(browser.executeScript.calls[0].args[0]).toContain(
+						'$httpBackend.' + methodName + '("/url", "string data", function (headers){return !!headers.my-header;}).passThrough();');
 				});
 
 			});
@@ -122,20 +122,20 @@ describe('Shortcut Method JavaScript Generation', function(){
 
 		it('should generate the correct JavaScript when called with a url only.', function () {
 			proxy.whenJSONP('/url').passThrough();
-			expect(browser.executeScript).toHaveBeenCalledWith(
-				'window.$httpBackend.whenJSONP("/url").passThrough();');
+			expect(browser.executeScript.calls[0].args[0]).toContain(
+				'$httpBackend.whenJSONP("/url").passThrough();');
 		});
 
 		it('should generate the correct JavaScript when called with a url function.', function () {
 			proxy.whenJSONP(function(url){return url.indexOf('/api') == 0;}).passThrough();
-			expect(browser.executeScript).toHaveBeenCalledWith(
-				'window.$httpBackend.whenJSONP(function (url){return url.indexOf(\'/api\') == 0;}).passThrough();');
+			expect(browser.executeScript.calls[0].args[0]).toContain(
+				'$httpBackend.whenJSONP(function (url){return url.indexOf(\'/api\') == 0;}).passThrough();');
 		});
 
 		it('should generate the correct JavaScript when called with a url regex.', function () {
 			proxy.whenJSONP(/\/url/i).passThrough();
-			expect(browser.executeScript).toHaveBeenCalledWith(
-				'window.$httpBackend.whenJSONP(/\\/url/i).passThrough();');
+			expect(browser.executeScript.calls[0].args[0]).toContain(
+				'$httpBackend.whenJSONP(/\\/url/i).passThrough();');
 		});
 
 	});
