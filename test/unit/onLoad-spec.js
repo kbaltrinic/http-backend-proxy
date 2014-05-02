@@ -89,10 +89,33 @@ describe('onLoad configuration', function(){
             expect(browser.executeScript).not.toHaveBeenCalled();
         });
 
+        describe('adding additional calls before subsequent page loads', function () {
+
+            beforeEach(function () {
+                proxy.onLoad.whenGET('/more-info').passThrough();
+                browser.addMockModule.reset();
+                browser.get('index.html');
+            });
+
+            it('should include all the previous calls in the onLoad script', function () {
+                expect(browser.addMockModule.calls[0].args[1]).toContain(
+                    '$httpBackend.whenGET("/session-info").passThrough();');
+                expect(browser.addMockModule.calls[0].args[1]).toContain(
+                    '$httpBackend.whenGET("/preferences").passThrough();');
+                expect(browser.addMockModule.calls[0].args[1]).toContain(
+                    '$httpBackend.whenGET("/more-info").passThrough();');
+            });
+
+            it('should add the new call to the onLoad script', function () {
+                expect(browser.addMockModule.calls[0].args[1]).toContain(
+                    '$httpBackend.whenGET("/more-info").passThrough();');
+            });
+        });
+
         describe('and a context exists', function () {
 
             beforeEach(function () {
-                proxy.context = 'a context'
+                proxy.context = 'proxy context'
                 browser.addMockModule.reset();
                 browser.get('index.html');
             });
@@ -110,7 +133,39 @@ describe('onLoad configuration', function(){
 
             it('should call addMockModule with a script that sets the context on $httpBackend', function () {
                 expect(browser.addMockModule.calls[0].args[1]).toContain(
-                    '$httpBackend.context="a context";');
+                    '$httpBackend.context="proxy context";');
+            });
+
+            describe('applying a context to onLoad', function () {
+
+                beforeEach(function () {
+                    proxy.onLoad.context = 'loader context';
+                    browser.addMockModule.reset();
+                    browser.get('index.html');
+                });
+
+                it('should not change the proxy context', function () {
+                    expect(proxy.context).toEqual('proxy context')
+                });
+
+                it('should use the proxy context when calling addMockModule', function () {
+                    expect(browser.addMockModule.calls[0].args[1]).toContain(
+                        '$httpBackend.context="proxy context";');
+                });
+            });
+
+            describe('changing the proxy context before subsequent page loads', function () {
+
+                beforeEach(function () {
+                    proxy.context = 'new context';
+                    browser.addMockModule.reset();
+                    browser.get('index.html');
+                });
+
+                it('should use the new context when calling addMockModule', function () {
+                    expect(browser.addMockModule.calls[0].args[1]).toContain(
+                        '$httpBackend.context="new context";');
+                });
             });
         });
     });
