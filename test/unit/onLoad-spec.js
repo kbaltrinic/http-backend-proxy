@@ -225,4 +225,27 @@ describe('onLoad configuration', function(){
         });
     });
 
+    describe('A proxy with an alternate context field name', function () {
+
+        var proxy;
+
+        beforeEach(function () {
+
+            proxy = new HttpBackend(browser, {contextField: 'alternate'});
+            proxy.alternate = 'proxy context';
+            proxy.onLoad.whenGET(/.*/).passThrough();
+            browser.get('index.html');
+        });
+
+        it('should call addMockModule once', function () {
+            expect(browser.addMockModule.calls.length).toEqual(1);
+        });
+
+        it('should call addMockModule with a script that uses the alternate field name to the context on $httpBackend', function () {
+            expect(browser.addMockModule.calls[0].args[1]).toContain(
+                '$httpBackend.alternate="proxy context";');
+        });
+
+    });
+
 });
