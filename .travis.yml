@@ -12,3 +12,11 @@ before_script:
 script:
   - node_modules/.bin/jasmine-node stest/unit/
   - node_modules/.bin/protractor test/protractor-conf.js --browser=firefox
+deploy:
+  provider: npm
+  email: kenneth@baltrinic.com
+  api_key:
+    secure: QslZhL1Mph1Nlgg7EioVyJ3Oyo+GSogC/KfE5FmE7+X2ORgCS6auHsfy3yCzKPj0tT8yFcXaxKZgEwWmfj5P5tSBq7OhIzhQfbmLHZJ/hR3SlgQxV+PJO92/F9h7RBVTMs/vBYepz+lNsnJO0BucYwkFvE/wAFnnb/aPAKf9tmg=
+  on:
+    tags: true
+    repo: kbaltrinic/http-backend-proxy
