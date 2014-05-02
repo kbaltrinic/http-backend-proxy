@@ -5,7 +5,7 @@
  */
 'use strict';
 
-module.exports = function(browser, options){
+var Proxy = function(browser, options){
 
   var DEFAULT_CONTEXT_FIELD_NAME = 'context';
 
@@ -23,8 +23,6 @@ module.exports = function(browser, options){
 
   var proxy = this;
   var buffer = [];
-
-  this[options.contextField] = {};
 
   createMethods(this, 'when', buildWhenFunction);
 
@@ -65,50 +63,94 @@ module.exports = function(browser, options){
     }
   }
 
-  this.flush = function(){
-    if(buffer.length > 0){
-      var script = getContextDefinitionScript() + buffer.join('\n');
-      buffer = [];
-      return browser.executeScript(script);
-    } else {
-      var deferred = protractor.promise.defer();
-      deferred.promise.complete();
-      return deferred.promise;
+  if(arguments.length < 3){
+
+    this[options.contextField] = {};
+
+    this.flush = function(){
+      if(buffer.length > 0){
+        var script = getContextDefinitionScript() + buffer.join('\n');
+        buffer = [];
+        return browser.executeScript(script);
+      } else {
+        var deferred = protractor.promise.defer();
+        deferred.promise.complete();
+        return deferred.promise;
+      }
     }
-  }
 
-  this.syncContext = function(context){
+    this.syncContext = function(context){
 
-    if(typeof(context) !== 'undefined'){
+      if(typeof(context) !== 'undefined'){
 
-      //If and only if both are simple objects, merge them
-      if(Object.prototype.toString.call(proxy[options.contextField]) === '[object Object]'
-        && Object.prototype.toString.call(context) === '[object Object]'){
+        //If and only if both are simple objects, merge them
+        if(Object.prototype.toString.call(proxy[options.contextField]) === '[object Object]'
+          && Object.prototype.toString.call(context) === '[object Object]'){
 
-        for (var key in context) {
-          if (context.hasOwnProperty(key)) {
-            proxy[options.contextField][key] = context[key];
+          for (var key in context) {
+            if (context.hasOwnProperty(key)) {
+              proxy[options.contextField][key] = context[key];
+            }
           }
-        }
 
-        context = proxy[options.contextField];
+          context = proxy[options.contextField];
+
+        } else {
+
+          proxy[options.contextField] = context;
+
+        }
 
       } else {
 
-        proxy[options.contextField] = context;
+        if(typeof(proxy[options.contextField]) === 'undefined'){
+          proxy[options.contextField] = {};
+        }
 
+        context =  proxy[options.contextField];
       }
 
-    } else {
-
-      if(typeof(proxy[options.contextField]) === 'undefined'){
-        proxy[options.contextField] = {};
-      }
-
-      context =  proxy[options.contextField];
+      return browser.executeScript(getContextDefinitionScript(context));
     }
 
-    return browser.executeScript(getContextDefinitionScript(context));
+    var onLoad;
+    this.__defineGetter__("onLoad", function(){
+
+      if(onLoad) return onLoad;
+
+      var _options_ = { buffer: true, contextField: options.contextField };
+      return onLoad = new Proxy(browser, _options_, proxy);
+
+    });
+
+  } else {
+
+    var parent = arguments[2];
+
+    var buildModuleScript = function (){
+      var script = getContextDefinitionScript(parent[options.contextField]) + buffer.join('\n');
+      return 'angular.module("http-backend-proxy", ["ngMockE2E"]).run(function($httpBackend){' +
+        script.replace(/window\.\$httpBackend/g, '$httpBackend') + '});'
+    }
+
+    var addedOnce = false;
+
+    var get = browser.get;
+    browser.get = function(){
+      //Workaround for Protractor Issue #764
+      if(addedOnce) browser.removeMockModule('http-backend-proxy');
+
+      if(buffer.length > 0){
+        browser.addMockModule('http-backend-proxy', buildModuleScript());
+      }
+
+      get.apply(browser, arguments);
+    };
+
+    this.reset = function() {
+      buffer = [];
+    };
+
   }
 
   function stringifyArgs(args){
@@ -157,3 +199,5 @@ module.exports = function(browser, options){
   }
 
 };
+
+module.exports = Proxy;

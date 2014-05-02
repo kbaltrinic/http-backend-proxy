@@ -125,6 +125,36 @@ Moreover, merging is only performed for the top-level object.  Nested objects ar
 
 If any of this is confusing the [syncContext unit tests](https://github.com/kbaltrinic/http-backend-proxy/blob/master/test/unit/sync-context-spec.js) may help clear it up and give detailed examples of the behavior.
 
+###Configuring $httpBackend upon Page Load
+All of the above works great for setting up mock HTTP responses for calls that will be made in response to user interaction with a loaded page.  But what about mocking data that your Angular application requests upon page load?  The proxy supports doing this through its `onLoad` qualifier.  Any configuration of the $httpBackend that needs to happen as part of the Angular applications initialization should be specified as follows:
+
+```JavaScript
+proxy.onLoad.when(...).respond(...);
+```
+All calls to $httpBackend that are set up in this manner will be buffered and sent to the browser using Protractor's [addMockModule][addMockModule] capability.  The proxy hooks into the `browser.get()` method such that when your tests call `get()`, the proxy gathers all calls made to `onLoad...` and wraps them in an Angular module that will execute them in its `run()` callback.  The proxy also makes the current value of its context object available within the callback such that it can be reference in the same manner as with post-load calls.
+
+Calls made using the `onLoad` qualifier are cumulative.  For example:
+
+```JavaScript
+proxy.onLoad.whenGET(/app-config).respond(...);
+browser.get('index.html');
+//The /app-config endpoint is configured as part of initializing the index.html page
+
+... do some tests...
+
+proxy.onLoad.whenGET(/user-prefs).respond(...);
+browser.get('my-account.html');
+//The /app-config and /user-prefs endpoints are both configured as part of initializing the my-accounts.html page
+
+... more tests ...
+
+```
+When this is not desired, it is possible to reset the proxy's buffer of commands to send upon page load by calling `proxy.onLoad.reset()`.
+
+Note that the buffer used for calls against `onLoad` is separate from the buffer for calls made directly against the proxy (when buffering is enabled).  Only the former buffer is resettable.
+
+Again, [looking at the tests](https://github.com/kbaltrinic/http-backend-proxy/blob/master/test/unit/onLoad-spec.js) should help clarify the proxy's `onLoad` behavior.
+
 ###Resetting the Mock
 The underlying $httpBackend mock does not support resetting the set of configured calls.  So there is no way to do this through the proxy either.  The simplest solution is to use `browser.get()` to reload your page.  This of course resets the entire application state, not just that of the $httpBackend.  Doing so may not seem ideal but if used wisely will give you good test isolation as well resetting the proxy.  Alternately, you can use the techniques described under context synchronization above to modify the mock's behavior for each test.
 
@@ -257,6 +287,7 @@ To provide feedback or get support, please [post an issue][issues] on the  GitHu
 
 [angular-seed]: https://github.com/angular/angular-seed
 [httpBackend]: http://docs.angularjs.org/api/ngMockE2E/service/$httpBackend
+[addMockModule]: (https://github.com/angular/protractor/blob/master/docs/api.md#protractorprototypeaddmockmodule)
 [bower]: http://bower.io
 [npm]: https://www.npmjs.org/
 [node]: http://nodejs.org
