@@ -116,15 +116,17 @@ var Proxy = function(browser, options){
 
     if(onLoad) return onLoad;
 
-    var _options_ = { buffer: true };
-    return onLoad = new Proxy(browser, _options_, true);
+    var _options_ = { buffer: true, contextField: options.contextField };
+    return onLoad = new Proxy(browser, _options_, proxy);
 
   });
 
   if(arguments.length > 2){
 
+    var parent = arguments[2];
+
     var buildModuleScript = function (){
-      var script = buffer.join('\n');
+      var script = getContextDefinitionScript(parent[options.contextField]) + buffer.join('\n');
       return 'angular.module("http-backend-proxy", ["ngMockE2E"]).run(function($httpBackend){' +
         script.replace(/window\.\$httpBackend/g, '$httpBackend') + '});'
     }

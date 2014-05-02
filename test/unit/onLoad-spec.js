@@ -88,6 +88,31 @@ describe('onLoad configuration', function(){
         it('should not call executeScript.', function () {
             expect(browser.executeScript).not.toHaveBeenCalled();
         });
+
+        describe('and a context exists', function () {
+
+            beforeEach(function () {
+                proxy.context = 'a context'
+                browser.addMockModule.reset();
+                browser.get('index.html');
+            });
+
+            it('should call addMockModule once', function () {
+                expect(browser.addMockModule.calls.length).toEqual(1);
+            });
+
+            it('should call addMockModule with a script that contains all the calls made to onLoad', function () {
+                expect(browser.addMockModule.calls[0].args[1]).toContain(
+                    '$httpBackend.whenGET("/session-info").passThrough();');
+                expect(browser.addMockModule.calls[0].args[1]).toContain(
+                    '$httpBackend.whenGET("/preferences").passThrough();');
+            });
+
+            it('should call addMockModule with a script that sets the context on $httpBackend', function () {
+                expect(browser.addMockModule.calls[0].args[1]).toContain(
+                    '$httpBackend.context="a context";');
+            });
+        });
     });
 
 });
