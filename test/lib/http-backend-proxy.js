@@ -111,6 +111,16 @@ var Proxy = function(browser, options){
     return browser.executeScript(getContextDefinitionScript(context));
   }
 
+  var onLoad;
+  this.__defineGetter__("onLoad", function(){
+
+    if(onLoad) return onLoad;
+
+    var _options_ = { buffer: true };
+    return onLoad = new Proxy(browser, _options_);
+
+  });
+
   function stringifyArgs(args){
     var i, s = [];
     for(i = 0; i < args.length; i++){
