@@ -24,6 +24,20 @@ describe('onLoad configuration', function(){
         browser_get = browser.get;
     });
 
+    describe('The proxy object', function () {
+
+        var proxy;
+
+        beforeEach(function () {
+
+            proxy = new HttpBackend(browser);
+        });
+
+        it('should not support a reset() function', function () {
+            expect(proxy.reset).toBeUndefined();
+        });
+    });
+
     describe('A proxy where no onLoad calls were made', function () {
 
         var proxy;
@@ -110,6 +124,20 @@ describe('onLoad configuration', function(){
                 expect(browser.addMockModule.calls[0].args[1]).toContain(
                     '$httpBackend.whenGET("/more-info").passThrough();');
             });
+        });
+
+        describe('calling onLoad.reset()', function () {
+
+            beforeEach(function () {
+                proxy.onLoad.reset();
+            });
+
+            it('should cause addMockModule to again not be called when browser.get is invoked.', function () {
+                browser.addMockModule.reset();
+                browser.get();
+                expect(browser.addMockModule).not.toHaveBeenCalled();
+            });
+
         });
 
         describe('and a context exists', function () {

@@ -144,6 +144,11 @@ var Proxy = function(browser, options){
 
       get.apply(browser, arguments);
     };
+
+    this.reset = function() {
+      buffer = [];
+    };
+
   }
 
   function stringifyArgs(args){
