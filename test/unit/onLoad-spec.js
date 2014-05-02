@@ -38,6 +38,33 @@ describe('onLoad configuration', function(){
         });
     });
 
+    describe('The onLoad object', function () {
+
+        var onLoad;
+
+        beforeEach(function () {
+
+            var proxy = new HttpBackend(browser);
+            onLoad = proxy.onLoad
+        });
+
+        it('should not have a flush() function', function () {
+            expect(onLoad.flush).toBeUndefined();
+        });
+
+        it('should not have a syncContext() function', function () {
+            expect(onLoad.syncContext).toBeUndefined();
+        });
+
+        it('should not have an onLoad object', function () {
+            expect(onLoad.onLoad).toBeUndefined();
+        });
+
+        it('should not initialize a context object', function () {
+            expect(onLoad.context).toBeUndefined();
+        });
+    });
+
     describe('A proxy where no onLoad calls were made', function () {
 
         var proxy;

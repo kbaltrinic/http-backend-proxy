@@ -24,8 +24,6 @@ var Proxy = function(browser, options){
   var proxy = this;
   var buffer = [];
 
-  this[options.contextField] = {};
-
   createMethods(this, 'when', buildWhenFunction);
 
   function createMethods(proxy, prefix, functionBuilder) {
@@ -65,63 +63,67 @@ var Proxy = function(browser, options){
     }
   }
 
-  this.flush = function(){
-    if(buffer.length > 0){
-      var script = getContextDefinitionScript() + buffer.join('\n');
-      buffer = [];
-      return browser.executeScript(script);
-    } else {
-      var deferred = protractor.promise.defer();
-      deferred.promise.complete();
-      return deferred.promise;
+  if(arguments.length < 3){
+
+    this[options.contextField] = {};
+
+    this.flush = function(){
+      if(buffer.length > 0){
+        var script = getContextDefinitionScript() + buffer.join('\n');
+        buffer = [];
+        return browser.executeScript(script);
+      } else {
+        var deferred = protractor.promise.defer();
+        deferred.promise.complete();
+        return deferred.promise;
+      }
     }
-  }
 
-  this.syncContext = function(context){
+    this.syncContext = function(context){
 
-    if(typeof(context) !== 'undefined'){
+      if(typeof(context) !== 'undefined'){
 
-      //If and only if both are simple objects, merge them
-      if(Object.prototype.toString.call(proxy[options.contextField]) === '[object Object]'
-        && Object.prototype.toString.call(context) === '[object Object]'){
+        //If and only if both are simple objects, merge them
+        if(Object.prototype.toString.call(proxy[options.contextField]) === '[object Object]'
+          && Object.prototype.toString.call(context) === '[object Object]'){
 
-        for (var key in context) {
-          if (context.hasOwnProperty(key)) {
-            proxy[options.contextField][key] = context[key];
+          for (var key in context) {
+            if (context.hasOwnProperty(key)) {
+              proxy[options.contextField][key] = context[key];
+            }
           }
-        }
 
-        context = proxy[options.contextField];
+          context = proxy[options.contextField];
+
+        } else {
+
+          proxy[options.contextField] = context;
+
+        }
 
       } else {
 
-        proxy[options.contextField] = context;
+        if(typeof(proxy[options.contextField]) === 'undefined'){
+          proxy[options.contextField] = {};
+        }
 
+        context =  proxy[options.contextField];
       }
 
-    } else {
-
-      if(typeof(proxy[options.contextField]) === 'undefined'){
-        proxy[options.contextField] = {};
-      }
-
-      context =  proxy[options.contextField];
+      return browser.executeScript(getContextDefinitionScript(context));
     }
 
-    return browser.executeScript(getContextDefinitionScript(context));
-  }
+    var onLoad;
+    this.__defineGetter__("onLoad", function(){
 
-  var onLoad;
-  this.__defineGetter__("onLoad", function(){
+      if(onLoad) return onLoad;
 
-    if(onLoad) return onLoad;
+      var _options_ = { buffer: true, contextField: options.contextField };
+      return onLoad = new Proxy(browser, _options_, proxy);
 
-    var _options_ = { buffer: true, contextField: options.contextField };
-    return onLoad = new Proxy(browser, _options_, proxy);
+    });
 
-  });
-
-  if(arguments.length > 2){
+  } else {
 
     var parent = arguments[2];
 
