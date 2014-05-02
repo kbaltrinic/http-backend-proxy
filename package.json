@@ -25,6 +25,7 @@
     "test-watch": "jasmine-node --autotest --watch test/lib/ --color test/unit/",
 
     "update-webdriver": "webdriver-manager update",
-    "e2e": "protractor test/protractor-conf.js"
+    "e2e": "protractor test/protractor-conf.js",
+    "e2e-debug": "protractor debug test/protractor-conf.js"
   }
 }
