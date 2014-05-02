@@ -136,13 +136,13 @@ All calls to $httpBackend that are set up in this manner will be buffered and se
 Calls made using the `onLoad` qualifier are cumulative.  For example:
 
 ```JavaScript
-proxy.onLoad.whenGET(/app-config).respond(...);
+proxy.onLoad.whenGET('/app-config').respond(...);
 browser.get('index.html');
 //The /app-config endpoint is configured as part of initializing the index.html page
 
 ... do some tests...
 
-proxy.onLoad.whenGET(/user-prefs).respond(...);
+proxy.onLoad.whenGET('/user-prefs').respond(...);
 browser.get('my-account.html');
 //The /app-config and /user-prefs endpoints are both configured as part of initializing the my-accounts.html page
 
@@ -279,7 +279,7 @@ To provide feedback or get support, please [post an issue][issues] on the  GitHu
 
 [angular-seed]: https://github.com/angular/angular-seed
 [httpBackend]: http://docs.angularjs.org/api/ngMockE2E/service/$httpBackend
-[addMockModule]: (https://github.com/angular/protractor/blob/master/docs/api.md#protractorprototypeaddmockmodule)
+[addMockModule]: https://github.com/angular/protractor/blob/master/docs/api.md#protractorprototypeaddmockmodule
 [bower]: http://bower.io
 [npm]: https://www.npmjs.org/
 [node]: http://nodejs.org
