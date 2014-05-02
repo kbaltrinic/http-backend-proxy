@@ -107,8 +107,8 @@ angular.module('app', [
 				};
 			}).error(function(data, status, headers){
 				$rootScope.initialRequest.response = {
-					data: data,
-					status: status,
+					data: data || '<NO RESPONSE RECEIVED>',
+					status: status || 5000,
 					headers: headers
 				};
 			});
