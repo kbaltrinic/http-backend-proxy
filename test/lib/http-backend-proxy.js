@@ -117,9 +117,32 @@ var Proxy = function(browser, options){
     if(onLoad) return onLoad;
 
     var _options_ = { buffer: true };
-    return onLoad = new Proxy(browser, _options_);
+    return onLoad = new Proxy(browser, _options_, true);
 
   });
+
+  if(arguments.length > 2){
+
+    var buildModuleScript = function (){
+      var script = buffer.join('\n');
+      return 'angular.module("http-backend-proxy", ["ngMockE2E"]).run(function($httpBackend){' +
+        script.replace(/window\.\$httpBackend/g, '$httpBackend') + '});'
+    }
+
+    var addedOnce = false;
+
+    var get = browser.get;
+    browser.get = function(){
+      //Workaround for Protractor Issue #764
+      if(addedOnce) browser.removeMockModule('http-backend-proxy');
+
+      if(buffer.length > 0){
+        browser.addMockModule('http-backend-proxy', buildModuleScript());
+      }
+
+      get.apply(browser, arguments);
+    };
+  }
 
   function stringifyArgs(args){
     var i, s = [];
