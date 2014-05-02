@@ -8,7 +8,7 @@ var HttpBackend = require('../lib/http-backend-proxy');
 
 describe('Context', function(){
 
-	var $httpBackend;
+  var $httpBackend;
     var firstRun = true;
 
     beforeEach(function() {
@@ -21,15 +21,15 @@ describe('Context', function(){
         $httpBackend = new HttpBackend(browser);
 
         $httpBackend.context = {
-        	statusCode: 205,
-        	statusText: "Sort-of OK ;-)",
-    		getResponse: function(url){return [200, 'You called: ' + url]}
+          statusCode: 205,
+          statusText: "Sort-of OK ;-)",
+        getResponse: function(url){return [200, 'You called: ' + url]}
         }
 
         $httpBackend.when('GET', '/remote')
           .respond(function(method, url){return [
-          	$httpBackend.context.statusCode,
-          	$httpBackend.context.statusText
+            $httpBackend.context.statusCode,
+            $httpBackend.context.statusText
           ];});
 
         $httpBackend.when('GET', '/func')
