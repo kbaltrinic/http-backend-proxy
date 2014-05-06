@@ -38,4 +38,9 @@ describe('onLoad', function(){
       expect(element(by.id('r-data')).getText()).toEqual('"chocolate"');
   });
 
+  afterEach(function () {
+    //Always call reset when ever an onload.when... has been invoked.
+    proxy.onLoad.reset();
+  });
+
 });

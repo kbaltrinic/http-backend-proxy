@@ -84,6 +84,10 @@ describe('onLoad configuration', function(){
             expect(browser.addMockModule).not.toHaveBeenCalled();
         });
 
+        it('should not patch the browser.get() method', function () {
+            expect(browser.get).toEqual(browser_get);
+        });
+
         it('should call get once.', function () {
             expect(browser_get.calls.length).toEqual(1);
         });
@@ -124,6 +128,10 @@ describe('onLoad configuration', function(){
                 '$httpBackend.whenGET("/session-info").passThrough();');
             expect(browser.addMockModule.calls[0].args[1]).toContain(
                 '$httpBackend.whenGET("/preferences").passThrough();');
+        });
+
+        it('should patch the browser.get() method', function () {
+            expect(browser.get).not.toEqual(browser_get);
         });
 
         it('should call get once.', function () {
@@ -169,6 +177,10 @@ describe('onLoad configuration', function(){
 
             beforeEach(function () {
                 proxy.onLoad.reset();
+            });
+
+            it('should remove the browser.get() patch', function () {
+                expect(browser.get).toEqual(browser_get);
             });
 
             it('should cause addMockModule to again not be called when browser.get is invoked.', function () {

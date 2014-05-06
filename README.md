@@ -149,7 +149,7 @@ browser.get('my-account.html');
 ... more tests ...
 
 ```
-When this is not desired, it is possible to reset the proxy's buffer of commands to send upon page load by calling `proxy.onLoad.reset()`.
+When this is not desired, it is possible to reset the proxy's buffer of commands to send upon page load by calling `proxy.onLoad.reset()`.  This also releases the hook into `browser.get()` which the proxy creates when a call is registered using `onLoad`.  *To ensure that tests using onLoad do not impact other tests, it is highly recommended that `reset()` be called as part of test clean-up for any test that use `onLoad`.*
 
 Note that the buffer used for calls against `onLoad` is separate from the buffer for calls made directly against the proxy (when buffering is enabled).  Only the former buffer is resettable.
 

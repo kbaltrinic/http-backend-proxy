@@ -54,9 +54,12 @@ var Proxy = function(browser, options){
 
   };
 
+  var wrapBrowserGet = function(){};
+
   function executeOrBuffer(script){
     if(options.buffer){
       buffer.push(script);
+      if(buffer.length == 1) wrapBrowserGet();
     } else {
       script = wrapScriptWithinInjectorInvoke(getContextDefinitionScript() + script);
       return browser.executeScript(script);
@@ -142,25 +145,30 @@ var Proxy = function(browser, options){
         script.replace(/window\.\$httpBackend/g, '$httpBackend') + '});'
     }
 
-    var addedOnce = false;
+    wrapBrowserGet = function(){
+      var addedOnce = false;
+      var get = browser.get;
+      browser.get = function(){
 
-    var get = browser.get;
-    browser.get = function(){
+        if(buffer.length > 0){
+          //Workaround for Protractor Issue #764
+          if(addedOnce && browser.removeMockModule){ browser.removeMockModule('http-backend-proxy') };
+          browser.addMockModule('http-backend-proxy', buildModuleScript());
+          addedOnce = true;
+        }
 
-      if(buffer.length > 0){
-        //Workaround for Protractor Issue #764
-        if(addedOnce && browser.removeMockModule){ browser.removeMockModule('http-backend-proxy') };
-        browser.addMockModule('http-backend-proxy', buildModuleScript());
-        addedOnce = true;
-      }
+        return get.apply(browser, arguments);
+      };
 
-      return get.apply(browser, arguments);
-    };
+      browser.get.__super__ = get;
+    }
 
     this.reset = function() {
       buffer = [];
+      if(browser.get.__super__){
+        browser.get = browser.get.__super__;
+      }
     };
-
 
   }
 
