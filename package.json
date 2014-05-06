@@ -1,7 +1,7 @@
 {
   "name": "http-backend-proxy",
   "private": false,
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "A proxy that allows configuring the AngularJs e2e $httpBackend service from within protractor based tests and enables protractor-to-browser data sharing.",
   "homepage":"https://github.com/kbaltrinic/http-backend-proxy/wiki",
   "main": "test/lib/http-backend-proxy.js",
