@@ -7,7 +7,7 @@
   "main": "test/lib/http-backend-proxy.js",
   "repository": "https://github.com/kbaltrinic/http-backend-proxy",
   "license": "MIT",
-  "keywords":["angular", "angularjs", "protractor", "e2e", "httpBackend", "testing"],
+  "keywords":["angular", "angularjs", "protractor", "e2e", "httpBackend", "testing", "ngMockE2E"],
   "author": "Kenneth Baltrinic <kenneth@baltrinic.com>",
   "bugs": "https://github.com/kbaltrinic/http-backend-proxy/issues",
   "devDependencies": {
