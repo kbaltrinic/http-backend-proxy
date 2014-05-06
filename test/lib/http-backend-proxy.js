@@ -146,10 +146,10 @@ var Proxy = function(browser, options){
 
     var get = browser.get;
     browser.get = function(){
-      //Workaround for Protractor Issue #764
-      if(addedOnce) browser.removeMockModule('http-backend-proxy');
 
       if(buffer.length > 0){
+        //Workaround for Protractor Issue #764
+        if(addedOnce && browser.removeMockModule){ browser.removeMockModule('http-backend-proxy') };
         browser.addMockModule('http-backend-proxy', buildModuleScript());
         addedOnce = true;
       }
@@ -160,6 +160,7 @@ var Proxy = function(browser, options){
     this.reset = function() {
       buffer = [];
     };
+
 
   }
 
