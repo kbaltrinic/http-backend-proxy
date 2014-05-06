@@ -3,6 +3,8 @@
 var HttpBackend = require('../lib/http-backend-proxy');
 var Browser = require('./helpers/protractor-browser')
 
+var PROMISE = "PROMISE"
+
 describe('onLoad configuration', function(){
 
     var browser, browser_get;
@@ -10,13 +12,13 @@ describe('onLoad configuration', function(){
     beforeEach(function () {
 
         browser = {
-            get: function(){},
+            get: function(){ return PROMISE; },
             addMockModule: function(){},
             removeMockModule: function(){},
             executeScript: function(){}
         };
 
-        spyOn(browser, 'get');
+        spyOn(browser, 'get').andCallThrough();
         spyOn(browser, 'addMockModule');
         spyOn(browser, 'executeScript');
 
@@ -68,13 +70,14 @@ describe('onLoad configuration', function(){
 
     describe('A proxy where no onLoad calls were made', function () {
 
-        var proxy;
+        var proxy, getResult;
 
         beforeEach(function () {
 
             proxy = new HttpBackend(browser);
             var onLoad = proxy.onLoad;
-            browser.get('index.html');
+            getResult = browser.get('index.html');
+
         });
 
         it('should make no addMockModule calls', function () {
@@ -89,18 +92,22 @@ describe('onLoad configuration', function(){
             expect(browser_get.calls[0].args[0]).toEqual('index.html');
         });
 
+        it('should return the promise returned by get.', function () {
+            expect(getResult).toEqual(PROMISE);
+        });
+
     });
 
     describe('A proxy where onLoad calls were made', function () {
 
-        var proxy, returnValue1, returnValue2;
+        var proxy, getResult;
 
         beforeEach(function () {
 
             proxy = new HttpBackend(browser);
             proxy.onLoad.whenGET('/session-info').passThrough();
             proxy.onLoad.whenGET('/preferences').passThrough();
-            browser.get('index.html');
+            getResult = browser.get('index.html');
         });
 
         it('should call addMockModule once', function () {
@@ -125,6 +132,10 @@ describe('onLoad configuration', function(){
 
         it('should call get with the passed url.', function () {
             expect(browser_get.calls[0].args[0]).toEqual('index.html');
+        });
+
+        it('should return the promise returned by get.', function () {
+            expect(getResult).toEqual(PROMISE);
         });
 
         it('should not call executeScript.', function () {

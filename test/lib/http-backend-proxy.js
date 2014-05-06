@@ -154,7 +154,7 @@ var Proxy = function(browser, options){
         addedOnce = true;
       }
 
-      get.apply(browser, arguments);
+      return get.apply(browser, arguments);
     };
 
     this.reset = function() {
