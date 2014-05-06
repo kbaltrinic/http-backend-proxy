@@ -12,6 +12,7 @@ describe('onLoad configuration', function(){
         browser = {
             get: function(){},
             addMockModule: function(){},
+            removeMockModule: function(){},
             executeScript: function(){}
         };
 

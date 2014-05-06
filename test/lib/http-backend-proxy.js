@@ -151,6 +151,7 @@ var Proxy = function(browser, options){
 
       if(buffer.length > 0){
         browser.addMockModule('http-backend-proxy', buildModuleScript());
+        addedOnce = true;
       }
 
       get.apply(browser, arguments);
