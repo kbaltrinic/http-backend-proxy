@@ -149,7 +149,7 @@ browser.get('my-account.html');
 ... more tests ...
 
 ```
-When this is not desired, it is possible to reset the proxy's buffer of commands to send upon page load by calling `proxy.onLoad.reset()`.  This also releases the hook into `browser.get()` which the proxy creates when a call is registered using `onLoad`.  *To ensure that tests using onLoad do not impact other tests, it is highly recommended that `reset()` be called as part of test clean-up for any test that use `onLoad`.*
+When this is not desired, it is possible to reset the proxy's buffer of commands to send upon page load by calling `proxy.onLoad.reset()`.  This also releases the hook into `browser.get()` which the proxy creates when a call is registered using `onLoad`.  *To ensure that tests using onLoad do not impact other tests, it is highly recommended that `reset()` be called as part of test clean-up for any tests that use `onLoad`.  Further, protractor versions prior to 0.19.0 do not support the `browser.removeMockModule()` method which `reset` uses.  Reset will silently fail to remove the module in this case.  If you are using a protractor version prior to 0.19.0 you can invoke `browser.clearMockModules()` yourself and deal with the consequences, if any, of having all modules removed.  For this reason, use of `onLoad` with earlier versions of Protractor is not recommended.*
 
 Note that the buffer used for calls against `onLoad` is separate from the buffer for calls made directly against the proxy (when buffering is enabled).  Only the former buffer is resettable.
 

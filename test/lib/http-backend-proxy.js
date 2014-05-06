@@ -146,26 +146,27 @@ var Proxy = function(browser, options){
     }
 
     wrapBrowserGet = function(){
-      var addedOnce = false;
       var get = browser.get;
       browser.get = function(){
 
         if(buffer.length > 0){
-          //Workaround for Protractor Issue #764
-          if(addedOnce && browser.removeMockModule){ browser.removeMockModule('http-backend-proxy') };
+          if(browser.get.addedOnce && browser.removeMockModule){ browser.removeMockModule('http-backend-proxy') };
           browser.addMockModule('http-backend-proxy', buildModuleScript());
-          addedOnce = true;
+          //addedOnce is a workaround for Protractor issue #764
+          browser.get.addedOnce = true;
         }
 
         return get.apply(browser, arguments);
       };
 
       browser.get.__super__ = get;
+      browser.get.addedOnce = false;
     }
 
     this.reset = function() {
       buffer = [];
       if(browser.get.__super__){
+        if(browser.get.addedOnce && browser.removeMockModule){ browser.removeMockModule('http-backend-proxy') };
         browser.get = browser.get.__super__;
       }
     };

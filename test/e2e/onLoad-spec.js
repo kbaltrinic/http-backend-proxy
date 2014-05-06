@@ -38,6 +38,18 @@ describe('onLoad', function(){
       expect(element(by.id('r-data')).getText()).toEqual('"chocolate"');
   });
 
+  describe('if reset', function(){
+
+    beforeEach(function () {
+      proxy.onLoad.reset();
+      browser.get('index.html?{"method":"GET","url":"user-prefs"}');
+    });
+
+    it('should no longer configure the browser to respond to http requests.', function(){
+        expect(element(by.id('r-status')).getText()).toEqual('5000');
+    });
+  });
+
   afterEach(function () {
     //Always call reset when ever an onload.when... has been invoked.
     proxy.onLoad.reset();

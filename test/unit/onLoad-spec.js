@@ -176,7 +176,12 @@ describe('onLoad configuration', function(){
         describe('calling onLoad.reset()', function () {
 
             beforeEach(function () {
+                spyOn(browser, 'removeMockModule');
                 proxy.onLoad.reset();
+            });
+
+            it('should remove proxy module from the browser.', function () {
+                expect(browser.removeMockModule).toHaveBeenCalledWith('http-backend-proxy');
             });
 
             it('should remove the browser.get() patch', function () {
