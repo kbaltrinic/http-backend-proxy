@@ -202,8 +202,17 @@ var Proxy = function(browser, options){
     if(typeof obj === 'function')
       return obj.toString();
 
-    if(obj instanceof RegExp)
-      return "new RegExp('" + obj.toString().slice(1, -1) + "')";
+    if(obj instanceof RegExp){
+
+      var modifiers = ''
+      if(obj.global === true) modifiers += 'g';
+      if(obj.ignoreCase === true) modifiers += 'i';
+      if(obj.multiline === true) modifiers += 'm';
+      var modifierCount = modifiers.length;
+      if(modifierCount > 0) modifiers = "','" + modifiers;
+
+      return "new RegExp('" + obj.toString().slice(1, -1 - modifierCount) + modifiers + "')";
+    }
 
     if(typeof(obj) === 'object' && !(obj instanceof Array)){
 
