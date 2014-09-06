@@ -44,7 +44,7 @@ describe('Shortcut Method JavaScript Generation', function(){
         it('should generate the correct JavaScript when called with a url regex.', function () {
           methodUnderTest(/\/url/i).passThrough();
           expect(browser.executeScript.calls[0].args[0]).toContain(
-            '$httpBackend.' + methodName + '(/\\/url/i).passThrough();');
+            '$httpBackend.' + methodName + '(new RegExp(\'\\/url\', \'i\')).passThrough();');
         });
 
         it('should generate the correct JavaScript when called with a url and headers', function () {
@@ -86,7 +86,7 @@ describe('Shortcut Method JavaScript Generation', function(){
         it('should generate the correct JavaScript when called with a url regex.', function () {
           methodUnderTest(/\/url/i).passThrough();
           expect(browser.executeScript.calls[0].args[0]).toContain(
-            '$httpBackend.' + methodName + '(/\\/url/i).passThrough();');
+            '$httpBackend.' + methodName + '(new RegExp(\'\\/url\', \'i\')).passThrough();');
         });
 
         it('should generate the correct JavaScript when called with a url and data object.', function () {
@@ -98,7 +98,7 @@ describe('Shortcut Method JavaScript Generation', function(){
         it('should generate the correct JavaScript when called with a url and data regex.', function () {
           methodUnderTest('/url', /pattern/g).passThrough();
           expect(browser.executeScript.calls[0].args[0]).toContain(
-            '$httpBackend.' + methodName + '("/url", /pattern/g).passThrough();');
+            '$httpBackend.' + methodName + '("/url", new RegExp(\'pattern\', \'g\')).passThrough();');
         });
 
         it('should generate the correct JavaScript when called with a url, data and headers object.', function () {
@@ -133,9 +133,11 @@ describe('Shortcut Method JavaScript Generation', function(){
     });
 
     it('should generate the correct JavaScript when called with a url regex.', function () {
+      console.log('should generate the correct JavaScript when called with a url regex.');
+      console.log(/\/url/i);
       proxy.whenJSONP(/\/url/i).passThrough();
       expect(browser.executeScript.calls[0].args[0]).toContain(
-        '$httpBackend.whenJSONP(/\\/url/i).passThrough();');
+        '$httpBackend.whenJSONP(new RegExp(\'\\/url\', \'i\')).passThrough();');
     });
 
   });

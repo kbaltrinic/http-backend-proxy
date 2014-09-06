@@ -114,7 +114,7 @@ describe('Proxy.when JavaScript generation', function(){
       func: function(){ return null; }
     };
 
-    var stringified = '{"string":"abc","number":290,"obj":{"nested":"object"},"array":[232,"ABC",null,{}],"null":null,"regex":/find me/gi,"func":function (){ return null; }}';
+    var stringified = '{"string":"abc","number":290,"obj":{"nested":"object"},"array":[232,"ABC",null,{}],"null":null,"regex":new RegExp(\'find me\', \'gi\'),"func":function (){ return null; }}';
 
     proxy.when('GET', '/endpoint', json).respond(200, json);
     expect(browser.executeScript.calls[0].args[0]).toContain(
@@ -131,11 +131,32 @@ describe('Proxy.when JavaScript generation', function(){
   });
 
 
-  it('should generate correct JavaScript for calls with regular expressions', function () {
+  it('should generate correct JavaScript for calls with regular expressions defined inside forward slashes', function () {
 
     proxy.when('GET', /\/db/g ).passThrough();
     expect(browser.executeScript.calls[0].args[0]).toContain(
-      '$httpBackend.when("GET", /\\/db/g).passThrough();');
+      '$httpBackend.when("GET", new RegExp(\'\\/db\', \'g\')).passThrough();');
+
+  });
+
+  /*  The following tests check the backend proxy accounts for the bizare way the toString
+      method works with regular expressions declared in different ways:
+      /\/url/.toString()                            ->    "\/url"
+      new RegExp("\/url") === new RegExp("/url")    ->    "/url"
+  */
+  it('should generate correct JavaScript for calls with regular expressions defined with the RegExp() consructor with forward slash escaping', function () {
+
+    proxy.when('GET', new RegExp('\/db', 'g')).passThrough();
+    expect(browser.executeScript.calls[0].args[0]).toContain(
+      '$httpBackend.when("GET", new RegExp(\'/db\', \'g\')).passThrough();');
+
+  });
+
+  it('should generate correct JavaScript for calls with regular expressions defined with the RegExp() consructor without forward slash escaping', function () {
+
+    proxy.when('GET', new RegExp('/db', 'g')).passThrough();
+    expect(browser.executeScript.calls[0].args[0]).toContain(
+      '$httpBackend.when("GET", new RegExp(\'/db\', \'g\')).passThrough();');
 
   });
 
