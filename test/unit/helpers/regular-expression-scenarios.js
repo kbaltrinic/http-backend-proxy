@@ -23,5 +23,21 @@ module.exports = [
         regex : new RegExp('/a/path'),
         output: "new RegExp('/a/path')",
         desc  : 'constructors with forward slashes'
+    }, {
+        regex : /'quoted'/,
+        output: "new RegExp('\\'quoted\\'')",
+        desc  : 'litterals with single quotes'
+    }, {
+        regex : new RegExp("'quoted'"),
+        output: "new RegExp('\\'quoted\\'')",
+        desc  : 'constructors with single quotes'
+    }, {
+        regex : /"quoted"/,
+        output: "new RegExp('\"quoted\"')",
+        desc  : 'litterals with double quotes'
+    }, {
+        regex : new RegExp('"quoted"'),
+        output: "new RegExp('\"quoted\"')",
+        desc  : 'constructors with double quotes'
     }
 ];

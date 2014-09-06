@@ -211,7 +211,9 @@ var Proxy = function(browser, options){
       var modifierCount = modifiers.length;
       if(modifierCount > 0) modifiers = "','" + modifiers;
 
-      return "new RegExp('" + obj.toString().slice(1, -1 - modifierCount) + modifiers + "')";
+      return "new RegExp('" +
+        obj.toString().slice(1, -1 - modifierCount).replace(/'/g, "\\'") +
+        modifiers + "')";
     }
 
     if(typeof(obj) === 'object' && !(obj instanceof Array)){
