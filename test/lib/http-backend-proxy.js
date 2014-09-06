@@ -199,8 +199,11 @@ var Proxy = function(browser, options){
     if(obj === null)
       return 'null';
 
-    if(typeof obj === 'function' || obj instanceof RegExp )
+    if(typeof obj === 'function')
       return obj.toString();
+
+    if(obj instanceof RegExp)
+      return "new RegExp('" + obj.toString().slice(1, -1) + "')";
 
     if(typeof(obj) === 'object' && !(obj instanceof Array)){
 
