@@ -199,8 +199,17 @@ var Proxy = function(browser, options){
     if(obj === null)
       return 'null';
 
-    if(typeof obj === 'function' || obj instanceof RegExp )
+    if(typeof obj === 'function'){
       return obj.toString();
+    }
+
+    if(obj instanceof RegExp){
+      var regexToString = obj.toString();
+      var regexEndIndex = regexToString.lastIndexOf("/");
+      var expression = regexToString.slice(1, regexEndIndex).replace("'","\\'");
+      var modifiers = regexToString.substring(regexEndIndex + 1);
+      return "new RegExp('" + expression + "', '" + modifiers + "')";
+    }
 
     if(typeof(obj) === 'object' && !(obj instanceof Array)){
 

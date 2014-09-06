@@ -163,7 +163,7 @@ describe('The Context Object', function(){
       proxy.whenGET('/someURL').respond(200);
 
       expect(browser.executeScript.calls[0].args[0]).toContain(
-        '$httpBackend.context={"regex":/find me/gi};$httpBackend.whenGET("/someURL").respond(200);');
+        '$httpBackend.context={"regex":new RegExp(\'find me\', \'gi\')};$httpBackend.whenGET("/someURL").respond(200);');
 
     });
 
@@ -185,7 +185,7 @@ describe('The Context Object', function(){
       proxy.whenGET('/someURL').respond(200);
 
       expect(browser.executeScript.calls[0].args[0]).toContain(
-        '$httpBackend.context={"obj":{"regex":/find me/gi}};$httpBackend.whenGET("/someURL").respond(200);');
+        '$httpBackend.context={"obj":{"regex":new RegExp(\'find me\', \'gi\')}};$httpBackend.whenGET("/someURL").respond(200);');
 
     });
 
