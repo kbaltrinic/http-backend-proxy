@@ -204,16 +204,13 @@ var Proxy = function(browser, options){
 
     if(obj instanceof RegExp){
 
-      var modifiers = ''
-      if(obj.global === true) modifiers += 'g';
-      if(obj.ignoreCase === true) modifiers += 'i';
-      if(obj.multiline === true) modifiers += 'm';
-      var modifierCount = modifiers.length;
-      if(modifierCount > 0) modifiers = "','" + modifiers;
+      var regexToString = obj.toString();
+      var regexEndIndex = regexToString.lastIndexOf("/");
+      var expression = regexToString.slice(1, regexEndIndex).replace(/'/g, "\\'");
+      var modifiers = regexToString.substring(regexEndIndex + 1);
+      if(modifiers.length > 0) modifiers = "','" + modifiers;
 
-      return "new RegExp('" +
-        obj.toString().slice(1, -1 - modifierCount).replace(/'/g, "\\'") +
-        modifiers + "')";
+      return "new RegExp('" + expression + modifiers + "')";
     }
 
     if(typeof(obj) === 'object' && !(obj instanceof Array)){
