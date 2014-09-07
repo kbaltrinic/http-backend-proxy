@@ -1,6 +1,8 @@
 'use strict';
 
 var HttpBackend = require('../lib/http-backend-proxy');
+var regexScenarios = require('./helpers/regular-expression-scenarios')
+
 
 describe('The Context Object', function(){
 
@@ -156,16 +158,20 @@ describe('The Context Object', function(){
 
     });
 
-    it('should forwarded regular expressions', function(){
+    for(var i = 0; i < regexScenarios.length; i++){ (function(scenario){
+        it('should forwarded regular expression ' + scenario.desc ,
+        function(){
 
-      proxy.context.regex = /find me/ig
+          proxy.context.regex = scenario.regex
 
-      proxy.whenGET('/someURL').respond(200);
+          proxy.whenGET('/someURL').respond(200);
 
-      expect(browser.executeScript.calls[0].args[0]).toContain(
-        '$httpBackend.context={"regex":/find me/gi};$httpBackend.whenGET("/someURL").respond(200);');
+          expect(browser.executeScript.calls[0].args[0]).toContain(
+            '$httpBackend.context={"regex":' + scenario.output +
+            '};$httpBackend.whenGET("/someURL").respond(200);');
 
-    });
+        });
+    })(regexScenarios[i])}
 
     it('should forwarded functions expressions', function(){
 
@@ -178,16 +184,20 @@ describe('The Context Object', function(){
 
     });
 
-    it('should forwarded regular expressions when nested in objects', function(){
+    for(var i = 0; i < regexScenarios.length; i++){ (function(scenario){
+        it('should forwarded regular expression ' + scenario.desc + ' when nested in objects',
+        function(){
 
-      proxy.context.obj = {regex:/find me/ig};
+          proxy.context.obj = {regex: scenario.regex};
 
-      proxy.whenGET('/someURL').respond(200);
+          proxy.whenGET('/someURL').respond(200);
 
-      expect(browser.executeScript.calls[0].args[0]).toContain(
-        '$httpBackend.context={"obj":{"regex":/find me/gi}};$httpBackend.whenGET("/someURL").respond(200);');
+          expect(browser.executeScript.calls[0].args[0]).toContain(
+            '$httpBackend.context={"obj":{"regex":' + scenario.output +
+            '}};$httpBackend.whenGET("/someURL").respond(200);');
 
-    });
+        });
+    })(regexScenarios[i])}
 
     it('should forwarded functions expressions when nested in objects', function(){
 
