@@ -202,6 +202,9 @@ var Proxy = function(browser, options){
     if(typeof obj === 'function')
       return obj.toString();
 
+    if(obj instanceof Date)
+      return 'new Date(' + obj.valueOf() + ')';
+
     if(obj instanceof RegExp){
 
       var regexToString = obj.toString();
@@ -213,7 +216,14 @@ var Proxy = function(browser, options){
       return "new RegExp('" + expression + modifiers + "')";
     }
 
-    if(typeof(obj) === 'object' && !(obj instanceof Array)){
+    if(obj instanceof Array){
+      var elements = []
+      obj.forEach(function(element){
+        elements.push(stringifyObject(element));
+      });
+      return '[' + elements.join(',') + ']';
+
+    } else if(typeof(obj) === 'object'){
 
       var fields = [];
       for (var key in obj) {
