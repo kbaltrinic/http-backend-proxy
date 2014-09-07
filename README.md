@@ -10,7 +10,7 @@ The proxy itself is my own work.  However much of the test application and proje
 See the [wiki](https://github.com/kbaltrinic/http-backend-proxy/wiki/Release-Notes) for release note.  Documentation is in the process of being moved from this readme (which is getting too long) to the wiki.  If you are reading this on NPM, I recommend you [look on github](https://github.com/kbaltrinic/http-backend-proxy/blob/master/README.md) for the most recent version.  Documentation often gets updated/improved there without a release to NPM.
 
 ## Getting and Using the Proxy
-The proxy is [available via npm](https://www.npmjs.org/package/http-backend-proxy) and can be installed into your project by calling `npm install http-backend-proxy` or better yet, just add `http-backend-proxy` to devDependencies in your `package.json` file.  The current version is 1.3.3 and is released under the MIT license.  Source code can be found on [GitHub](https://github.com/kbaltrinic/http-backend-proxy).
+The proxy is [available via npm](https://www.npmjs.org/package/http-backend-proxy) and can be installed into your project by calling `npm install http-backend-proxy` or better yet, just add `http-backend-proxy` to devDependencies in your `package.json` file.  The current version is 1.4.0 and is released under the MIT license.  Source code can be found on [GitHub](https://github.com/kbaltrinic/http-backend-proxy).
 
 To instantiate an instance of the proxy, require it and create a new instance:
 ```JavaScript
