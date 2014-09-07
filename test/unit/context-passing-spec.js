@@ -232,6 +232,42 @@ describe('The Context Object', function(){
 
     });
 
+    for(var i = 0; i < regexScenarios.length; i++){ (function(scenario){
+        it('should forwarded regular expression ' + scenario.desc + ' when nested in arrays',
+        function(){
+
+          proxy.context.array = [scenario.regex];
+
+          proxy.whenGET('/someURL').respond(200);
+
+          expect(browser.executeScript.calls[0].args[0]).toContain(
+            '$httpBackend.context={"array":[' + scenario.output +
+            ']};$httpBackend.whenGET("/someURL").respond(200);');
+
+        });
+    })(regexScenarios[i])}
+
+    it('should forwarded dates when nested in arrays', function(){
+
+      proxy.context.array = [new Date(1234567890)];
+
+      proxy.whenGET('/someURL').respond(200);
+
+      expect(browser.executeScript.calls[0].args[0]).toContain(
+        '$httpBackend.context={"array":[new Date(1234567890)]};$httpBackend.whenGET("/someURL").respond(200);');
+
+    });
+
+    it('should forwarded functions when nested in arrays', function(){
+
+      proxy.context.array = [function(n){return n++;}];
+
+      proxy.whenGET('/someURL').respond(200);
+
+      expect(browser.executeScript.calls[0].args[0]).toContain(
+        '$httpBackend.context={"array":[function (n){return n++;}]};$httpBackend.whenGET("/someURL").respond(200);');
+
+    });
   });
 
 });
