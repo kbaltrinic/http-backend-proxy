@@ -23,8 +23,12 @@ describe('Context', function(){
         $httpBackend.context = {
           statusCode: 205,
           statusText: "Sort-of OK ;-)",
-        getResponse: function(url){return [200, 'You called: ' + url]}
+          date: new Date(2099, 4, 1),
+          getResponse: function(url){return [200, 'You called: ' + url]}
         }
+
+        //So that the test runs correctly in any time zone.
+        $httpBackend.context.date.setUTCHours(0);
 
         $httpBackend.when('GET', '/remote')
           .respond(function(method, url){return [
@@ -34,6 +38,12 @@ describe('Context', function(){
 
         $httpBackend.when('GET', '/func')
           .respond(function(method, url){return $httpBackend.context.getResponse(url);});
+
+        $httpBackend.when('GET', '/date')
+          .respond(function(method, url){return [
+            200,
+            $httpBackend.context.date.toUTCString()
+          ]});
 
         element(by.id('method')).sendKeys('GET');
 
@@ -52,6 +62,15 @@ describe('Context', function(){
 
     });
 
+    it('should correctly serialize dates', function() {
+
+      element(by.id('url')).clear();
+      element(by.id('url')).sendKeys('date');
+      element(by.id('call')).click();
+
+      expect(element(by.id('r-data')).getText()).toEqual('"Fri, 01 May 2099 00:00:00 GMT"');
+
+    });
 
     it('functions should be callable on the server', function() {
 

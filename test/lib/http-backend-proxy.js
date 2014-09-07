@@ -199,10 +199,31 @@ var Proxy = function(browser, options){
     if(obj === null)
       return 'null';
 
-    if(typeof obj === 'function' || obj instanceof RegExp )
+    if(typeof obj === 'function')
       return obj.toString();
 
-    if(typeof(obj) === 'object' && !(obj instanceof Array)){
+    if(obj instanceof Date)
+      return 'new Date(' + obj.valueOf() + ')';
+
+    if(obj instanceof RegExp){
+
+      var regexToString = obj.toString();
+      var regexEndIndex = regexToString.lastIndexOf("/");
+      var expression = regexToString.slice(1, regexEndIndex).replace(/'/g, "\\'");
+      var modifiers = regexToString.substring(regexEndIndex + 1);
+      if(modifiers.length > 0) modifiers = "','" + modifiers;
+
+      return "new RegExp('" + expression + modifiers + "')";
+    }
+
+    if(obj instanceof Array){
+      var elements = []
+      obj.forEach(function(element){
+        elements.push(stringifyObject(element));
+      });
+      return '[' + elements.join(',') + ']';
+
+    } else if(typeof(obj) === 'object'){
 
       var fields = [];
       for (var key in obj) {

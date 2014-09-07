@@ -1,6 +1,7 @@
 'use strict';
 
 var HttpBackend = require('../lib/http-backend-proxy');
+var regexScenarios = require('./helpers/regular-expression-scenarios')
 
 describe('Proxy.when JavaScript generation', function(){
 
@@ -110,11 +111,11 @@ describe('Proxy.when JavaScript generation', function(){
       },
       array: [ 232, "ABC", null, {} ],
       null: null,
-      regex: /find me/gi,
+      regex: /find me/,
       func: function(){ return null; }
     };
 
-    var stringified = '{"string":"abc","number":290,"obj":{"nested":"object"},"array":[232,"ABC",null,{}],"null":null,"regex":/find me/gi,"func":function (){ return null; }}';
+    var stringified = '{"string":"abc","number":290,"obj":{"nested":"object"},"array":[232,"ABC",null,{}],"null":null,"regex":new RegExp(\'find me\'),"func":function (){ return null; }}';
 
     proxy.when('GET', '/endpoint', json).respond(200, json);
     expect(browser.executeScript.calls[0].args[0]).toContain(
@@ -131,12 +132,15 @@ describe('Proxy.when JavaScript generation', function(){
   });
 
 
-  it('should generate correct JavaScript for calls with regular expressions', function () {
+  for(var i = 0; i < regexScenarios.length; i++){ (function(scenario){
+    it('should generate correct JavaScript for calls with regular expression '  + scenario.desc,
+    function () {
 
-    proxy.when('GET', /\/db/g ).passThrough();
-    expect(browser.executeScript.calls[0].args[0]).toContain(
-      '$httpBackend.when("GET", /\\/db/g).passThrough();');
+      proxy.when('GET', scenario.regex ).passThrough();
+      expect(browser.executeScript.calls[0].args[0]).toContain(
+        '$httpBackend.when("GET", ' + scenario.output + ').passThrough();');
 
-  });
+    });
+  })(regexScenarios[i])}
 
 });

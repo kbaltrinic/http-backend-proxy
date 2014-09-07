@@ -164,4 +164,44 @@ describe('Remote configuration behavior', function(){
 
   });
 
+  describe('Remotely configured GET call that uses a reqular expression', function() {
+
+    var httpBackend;
+    var firstRun = true;
+
+    beforeEach(function() {
+
+      if(firstRun){
+        firstRun = false;
+
+        browser.get('index.html');
+
+        httpBackend = new HttpBackend(browser);
+
+        httpBackend.when('GET', /regexp/i)
+          .respond(function(method, url){return [200, 'You called: ' + url];});
+
+        element(by.id('method')).sendKeys('GET');
+        element(by.id('url')).sendKeys('get-RegExp');
+        element(by.id('call')).click();
+
+      }
+
+    });
+
+    it('should result in a response status of 200', function() {
+
+      expect(element(by.id('r-status')).getText()).toEqual('200');
+
+    });
+
+    it('should result in the computed response body being displayed', function() {
+
+      expect(element(by.id('r-data')).getText())
+        .toEqual('"You called: /get-RegExp"');
+
+    });
+
+  });
+
 });
