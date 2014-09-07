@@ -202,6 +202,9 @@ var Proxy = function(browser, options){
     if(typeof obj === 'function')
       return obj.toString();
 
+    if(obj instanceof Date)
+      return 'new Date(' + obj.valueOf() + ')';
+
     if(obj instanceof RegExp){
 
       var regexToString = obj.toString();
