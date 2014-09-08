@@ -196,7 +196,7 @@ describe('The syncContext method', function(){
             it('should syncronize the new context object to the browser', function(){
 
                 expect(browser.executeScript.calls[0].args[0]).toContain(
-                    "$httpBackend.context=new RegExp('a regex');");
+                    '$httpBackend.context=new RegExp("a regex");');
 
             });
 

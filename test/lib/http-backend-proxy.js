@@ -209,11 +209,11 @@ var Proxy = function(browser, options){
 
       var regexToString = obj.toString();
       var regexEndIndex = regexToString.lastIndexOf("/");
-      var expression = regexToString.slice(1, regexEndIndex).replace(/'/g, "\\'");
+      var expression = JSON.stringify(regexToString.slice(1, regexEndIndex));
       var modifiers = regexToString.substring(regexEndIndex + 1);
-      if(modifiers.length > 0) modifiers = "','" + modifiers;
+      if(modifiers.length > 0) modifiers = "," + JSON.stringify(modifiers);
 
-      return "new RegExp('" + expression + modifiers + "')";
+      return 'new RegExp(' + expression + modifiers + ')';
     }
 
     if(obj instanceof Array){
@@ -228,7 +228,7 @@ var Proxy = function(browser, options){
       var fields = [];
       for (var key in obj) {
         if (obj.hasOwnProperty(key)) {
-          fields.push('"'+ key + '":' + stringifyObject(obj[key]));
+          fields.push(JSON.stringify(key) + ':' + stringifyObject(obj[key]));
         }
       }
 
