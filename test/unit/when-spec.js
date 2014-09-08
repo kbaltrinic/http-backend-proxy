@@ -115,7 +115,7 @@ describe('Proxy.when JavaScript generation', function(){
       func: function(){ return null; }
     };
 
-    var stringified = '{"string":"abc","number":290,"obj":{"nested":"object"},"array":[232,"ABC",null,{}],"null":null,"regex":new RegExp(\'find me\'),"func":function (){ return null; }}';
+    var stringified = '{"string":"abc","number":290,"obj":{"nested":"object"},"array":[232,"ABC",null,{}],"null":null,"regex":new RegExp("find me"),"func":function (){ return null; }}';
 
     proxy.when('GET', '/endpoint', json).respond(200, json);
     expect(browser.executeScript.calls[0].args[0]).toContain(

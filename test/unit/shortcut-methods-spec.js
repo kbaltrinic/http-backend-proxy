@@ -44,7 +44,7 @@ describe('Shortcut Method JavaScript Generation', function(){
         it('should generate the correct JavaScript when called with a url regex.', function () {
           methodUnderTest(new RegExp('/url')).passThrough();
           expect(browser.executeScript.calls[0].args[0]).toContain(
-            '$httpBackend.' + methodName + "(new RegExp('/url')).passThrough();");
+            '$httpBackend.' + methodName + '(new RegExp("/url")).passThrough();');
         });
 
         it('should generate the correct JavaScript when called with a url and headers', function () {
@@ -86,7 +86,7 @@ describe('Shortcut Method JavaScript Generation', function(){
         it('should generate the correct JavaScript when called with a url regex.', function () {
           methodUnderTest(new RegExp('/url')).passThrough();
           expect(browser.executeScript.calls[0].args[0]).toContain(
-            '$httpBackend.' + methodName + "(new RegExp('/url')).passThrough();");
+            '$httpBackend.' + methodName + '(new RegExp("/url")).passThrough();');
         });
 
         it('should generate the correct JavaScript when called with a url and data object.', function () {
@@ -98,7 +98,7 @@ describe('Shortcut Method JavaScript Generation', function(){
         it('should generate the correct JavaScript when called with a url and data regex.', function () {
           methodUnderTest('/url', new RegExp('pattern')).passThrough();
           expect(browser.executeScript.calls[0].args[0]).toContain(
-            '$httpBackend.' + methodName + '("/url", new RegExp(\'pattern\')).passThrough();');
+            '$httpBackend.' + methodName + '("/url", new RegExp("pattern")).passThrough();');
         });
 
         it('should generate the correct JavaScript when called with a url, data and headers object.', function () {
@@ -135,7 +135,7 @@ describe('Shortcut Method JavaScript Generation', function(){
     it('should generate the correct JavaScript when called with a url regex.', function () {
       proxy.whenJSONP(new RegExp('/url')).passThrough();
       expect(browser.executeScript.calls[0].args[0]).toContain(
-        "$httpBackend.whenJSONP(new RegExp('/url')).passThrough();");
+        '$httpBackend.whenJSONP(new RegExp("/url")).passThrough();');
     });
 
   });
