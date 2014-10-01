@@ -156,7 +156,11 @@ describe('Buffered configuration', function(){
 
       it('should include all calls to the proxy in that single call', function () {
         expect(browser.executeScript.calls[0].args[0]).toContain(
-          '$httpBackend.whenGET("/url1").passThrough();\n$httpBackend.whenGET("/url2").passThrough();');
+          '$httpBackend.whenGET("/url1").passThrough();'
+        );
+        expect(browser.executeScript.calls[0].args[0]).toContain(
+          '$httpBackend.whenGET("/url2").passThrough();'
+        );
       });
 
       it('should pass the current data context to the browser', function () {

@@ -5,6 +5,8 @@
  */
 'use strict';
 
+var crypto = require('crypto');
+
 var Proxy = function(browser, options){
 
   var DEFAULT_CONTEXT_FIELD_NAME = 'context';
@@ -37,6 +39,17 @@ var Proxy = function(browser, options){
     return function(){
 
       var whenJS = '$httpBackend.' + funcName + '(' + stringifyArgs(arguments) + ')';
+      var signature = md5(whenJS);
+
+      whenJS = [
+        '(function(){',
+        'window.httpBackendProxyRegistry = window.httpBackendProxyRegistry || {};',
+        'return typeof window.httpBackendProxyRegistry["' + signature + '"] == "undefined" ?',
+        'window.httpBackendProxyRegistry["' + signature + '"] = ' + whenJS,
+        ':',
+        'window.httpBackendProxyRegistry["' + signature + '"]',
+        '})()'
+      ].join('');
 
       return {
         respond: function() {
@@ -237,6 +250,10 @@ var Proxy = function(browser, options){
 
     return JSON.stringify(obj);
 
+  }
+
+  function md5(str){
+    return crypto.createHash('md5').update(str).digest('hex');
   }
 
 };
