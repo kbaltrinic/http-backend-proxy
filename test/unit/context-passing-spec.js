@@ -93,8 +93,8 @@ describe('The Context Object', function(){
 
       proxy.whenGET('/someURL').respond(200);
 
-      expect(browser.executeScript.calls[0].args[0]).toContain(
-        '$httpBackend.alternate={};$httpBackend.whenGET("/someURL").respond(200);');
+      expect(browser.executeScript.calls[0].args[0]).toContain('$httpBackend.alternate={};');
+      expect(browser.executeScript.calls[0].args[0]).toContain('$httpBackend.whenGET("/someURL").respond(200);');
 
     });
 
