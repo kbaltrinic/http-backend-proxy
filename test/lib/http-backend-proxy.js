@@ -69,8 +69,8 @@ var Proxy = function(browser, options){
   function wrapScriptWithinInjectorInvoke(script){
     return '\
       var el = document.querySelector("' + browser.rootEl + '");\
-      angular.element(el).injector().invoke(function($httpBackend){\
-      ' + script + '});';
+      angular.element(el).injector().invoke(["$httpBackend", function($httpBackend){\
+      ' + script + '}]);';
   }
 
   if(arguments.length < 3){
@@ -141,8 +141,8 @@ var Proxy = function(browser, options){
 
     var buildModuleScript = function (){
       var script = getContextDefinitionScript(parent[options.contextField]) + buffer.join('\n');
-      return 'angular.module("http-backend-proxy", ["ngMockE2E"]).run(function($httpBackend){' +
-        script.replace(/window\.\$httpBackend/g, '$httpBackend') + '});'
+      return 'angular.module("http-backend-proxy", ["ngMockE2E"]).run(["$httpBackend", function($httpBackend){' +
+        script.replace(/window\.\$httpBackend/g, '$httpBackend') + '}]);'
     }
 
     wrapBrowserGet = function(){
