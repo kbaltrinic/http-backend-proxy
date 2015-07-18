@@ -1,12 +1,10 @@
 //Used to mocks the globaly available protractor promise
-var protractor = { promise: {defer: function(){
-  var promise = {
-    isComplete: false,
-    complete: function(){
-      promise.isComplete = true;
-    }
+var protractor = { promise: { defer: function(){
+  var promise = { isComplete: false };
+  return {
+    promise: promise,
+    fulfill: function() { promise.isComplete = true; }
   };
-  return{ promise: promise };
 }}};
 
 module.exports = function(){
