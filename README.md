@@ -1,17 +1,21 @@
-#$httpBackend Proxy
+# $httpBackend Proxy
+
 [![Build Status](https://travis-ci.org/kbaltrinic/http-backend-proxy.svg?branch=master)](https://travis-ci.org/kbaltrinic/http-backend-proxy)
 
 This is a node module for use with the [AngularJS Protractor][protractor] end-to-end testing framework.  It allows you to make configuration calls to [$httpBackend][httpBackend] from within Protractor itself as well as share data and functions between the test environment and the browser.  Being able to configuring the mock back end along side the tests that depend upon it improves the modularity, encapsulation and flexibility of your tests.  The proxy allows $httpBackend to live up to its full potential, making it easier to test angular web applications in abstraction from their back end services.
 
 ### Credits
+
 The proxy itself is my own work.  However much of the test application and project structure, etc. is based off of [the angular-seed project][angular-seed].  This includes significant parts of this README.
 
-###Release Notes and Documentation
+### Release Notes and Documentation
+
 See the [wiki](https://github.com/kbaltrinic/http-backend-proxy/wiki/Release-Notes) for release note.  Documentation is in the process of being moved from this readme (which is getting too long) to the wiki.  If you are reading this on NPM, I recommend you [look on github](https://github.com/kbaltrinic/http-backend-proxy/blob/master/README.md) for the most recent version.  Documentation often gets updated/improved there without a release to NPM.
 
 The proxy has been tested with the lastest .x versions of the Angular.js from the 1.2, 1.3 and 1.4 series through 1.4.3.  It has been tested with the latest .x versions of Protractor from the 0.24, 1.8 and 2.1 series through 2.1.0.
 
 ## Getting and Using the Proxy
+
 The proxy is [available via npm](https://www.npmjs.org/package/http-backend-proxy) and can be installed into your project by calling `npm install http-backend-proxy` or better yet, just add `http-backend-proxy` to devDependencies in your `package.json` file.  The current version is 1.4.2 and is released under the MIT license.  Source code can be found on [GitHub](https://github.com/kbaltrinic/http-backend-proxy).
 
 To instantiate an instance of the proxy, require it and create a new instance:
@@ -25,12 +29,14 @@ The proxy supports the same basic interface as Angular's $httpBackend so [start 
 
 See the end-to-end tests in `test/e2e` for some examples of usage.
 
-###Buffered Mode
+### Buffered Mode
+
 It is possible to use the proxy in a 'buffered' mode by adding `buffer: true` to the configuration object passed to proxy constructor.  When buffering is enabled, proxied methods return void and do not immediately pass their calls through to the browser. Calling `flush()` will pass all buffered calls through to the browser at once and return a promise that will be fulfilled after all calls have been executed.
 
 Buffering is the generally recommended approach because in most cases you will need to make numerous calls to the proxy to set things up the way you want them for a given spec.  Buffering will reduce the number of remote calls and considerably speed up your test setup.
 
-###Calling Functions and Sharing Data between Tests and Browser
+### Calling Functions and Sharing Data between Tests and Browser
+
 Using the proxy to configure $httpBackend for simple calls is, well, simple:
 ```JavaScript
 proxy.whenGET('/logoff').respond(200);
@@ -64,7 +70,8 @@ proxy.when('GET', /search\?q=.*/)
 ```
 Now we have a problem.  The proxy can serialize the function just fine and send it to the browser, but when it gets there, `getQueryTermFrom` and `searchResults` are not going to resolve.  This calls for...
 
-####Using the Context Object
+#### Using the Context Object
+
 The proxy provides a special object called the context object that is intended to help out in theses kinds of situations.  The context object is a property of the proxy, called `context` oddly enough, the value of which will be synchronized between the proxy and the browser-side $httpBackend before any proxied calls are executed on the browser.  With this object in place we can now do the following:
 
 ```JavaScript
@@ -89,10 +96,12 @@ Two caveats to the above: First, the context is limited to the following data ty
 
 When buffering is turned off, the context object is synchronized with the browser before every call to `respond()`.  When buffering is turned on, this synchronization occurs as part of the call to `flush()`.  This is important, because it is the value of the context object at the time of synchronization, not at the point when `respond()` is called on the proxy, that determines its value in the browser.  More precisely, since values in the context object may not even be evaluated in the browser until an HTTP call occurs, the value at the time of the HTTP call will be the value of the object as of the most recent prior synchronization.  Said another way, there is no closure mechanism in play here.  Because of this behavior, it is also possible to manually synchronized the context object at any time.  See below for how and why you might want to do this.
 
-####Configuring the Context Object
+#### Configuring the Context Object
+
 If for some reason you don't like your context object being called 'context' (or more importantly, if 'context' should turn out to conflict with a future property of $httpBackend), it can be renamed by adding `contextField: "a-new-field-name"` to the configuration object that the proxy is constructed with.  You can also disable the auto-synchronization of the context object described above by passing `contextAutoSync: false`.  If you do, you will need to manually invoke synchronization.
 
-####Manually Synchronizing Contexts
+#### Manually Synchronizing Contexts
+
 The state of the context object can be synchronized manually at any time by calling `proxy.syncContext()`.  This does not flush the buffer or otherwise send any new configuration to the remote $httpBackend instance.  It simply synchronizes the state of the local and in-browser context objects.  `syncContext` returns a promise.
 
 Why do this?  Consider the above example where we have a search URL whose return value is essentially defined as context.searchResults.  If we can update the context in between tests, we can effectively cause search to return different results for each test.  This makes it easy, for example, to test for correct behavior when some, none, and more-than-expected results are returned.
@@ -127,7 +136,8 @@ Moreover, merging is only performed for the top-level object.  Nested objects ar
 
 If any of this is confusing the [syncContext unit tests](https://github.com/kbaltrinic/http-backend-proxy/blob/master/test/unit/sync-context-spec.js) may help clear it up and give detailed examples of the behavior.
 
-###Configuring $httpBackend upon Page Load
+### Configuring $httpBackend upon Page Load
+
 All of the above works great for setting up mock HTTP responses for calls that will be made in response to user interaction with a loaded page.  But what about mocking data that your Angular application requests upon page load?  The proxy supports doing this through its `onLoad` qualifier.  Any configuration of the $httpBackend that needs to happen as part of the Angular applications initialization should be specified as follows:
 
 ```JavaScript
@@ -157,7 +167,8 @@ Note that the buffer used for calls against `onLoad` is separate from the buffer
 
 Again, [looking at the tests](https://github.com/kbaltrinic/http-backend-proxy/blob/master/test/unit/onLoad-spec.js) should help clarify the proxy's `onLoad` behavior.
 
-###Resetting the Mock
+### Resetting the Mock
+
 The underlying $httpBackend mock does not support resetting the set of configured calls.  So there is no way to do this through the proxy either.  The simplest solution is to use `browser.get()` to reload your page.  This of course resets the entire application state, not just that of the $httpBackend.  Doing so may not seem ideal but if used wisely will give you good test isolation as well resetting the proxy.  Alternately, you can use the techniques described under context synchronization above to modify the mock's behavior for each test.
 
 ## The Test-Harness Application
@@ -166,7 +177,7 @@ The angular application that makes up most of this repository is simply a test h
 
 Chance are, unless you plan to contribute to the development of http-backend-proxy, you will never need to load the test harness and can safely skip this section.
 
-###Setup
+### Setup
 
 #### Install Dependencies
 
@@ -276,7 +287,8 @@ npm run e2e
 This script will execute the end-to-end tests against the application being hosted on the
 development server.
 
-##Feedback and Support
+## Feedback and Support
+
 To provide feedback or get support, please [post an issue][issues] on the  GitHub project.
 
 [angular-seed]: https://github.com/angular/angular-seed
