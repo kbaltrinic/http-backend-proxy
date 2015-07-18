@@ -84,7 +84,7 @@ var Proxy = function(browser, options){
         return browser.executeScript(script);
       } else {
         var deferred = protractor.promise.defer();
-        deferred.promise.complete();
+        deferred.fulfill();
         return deferred.promise;
       }
     }
