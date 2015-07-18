@@ -94,6 +94,10 @@ describe('Buffered configuration', function(){
           expect(element(by.id('r-status')).getText()).toEqual('200');
     });
 
+    it('flushing again should not error.', function () {
+      expect(function(){ proxy.flush(); }).not.toThrow();
+    });
+
   });
 
 });
