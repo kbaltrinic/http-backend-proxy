@@ -120,7 +120,7 @@ describe('onLoad configuration', function(){
 
         it('should call addMockModule with a script that adds a module that uses ngMockE2E', function () {
             expect(browser.addMockModule.calls[0].args[1]).toContain(
-                'angular.module("http-backend-proxy", ["ngMockE2E"]).run(function($httpBackend){');
+                'angular.module("http-backend-proxy", ["ngMockE2E"]).run(["$httpBackend", function($httpBackend){');
         });
 
         it('should call addMockModule with a script that contains all the calls made to onLoad', function () {
