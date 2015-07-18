@@ -7,19 +7,19 @@
 
 var HttpBackend = require('../lib/http-backend-proxy');
 
-describe('Remote configuration behavior', function(){
+describe('Remote configuration behavior', function() {
 
   var angularVersion;
   var urlSelectorFunctionsSupported;
   var firstRun0 = true;
 
-  beforeEach(function () {
+  beforeEach(function() {
 
-    if(firstRun0){
+    if (firstRun0) {
       firstRun0 = false;
 
       browser.get('index.html');
-      element(by.id('version')).getText().then(function(version){
+      element(by.id('version')).getText().then(function(version) {
         angularVersion = JSON.parse(version);
         urlSelectorFunctionsSupported = angularVersion.major > 1 || angularVersion.minor > 2;
       });
@@ -34,7 +34,7 @@ describe('Remote configuration behavior', function(){
 
     beforeEach(function() {
 
-      if(firstRun){
+      if (firstRun) {
         firstRun = false;
 
         browser.get('index.html');
@@ -42,7 +42,9 @@ describe('Remote configuration behavior', function(){
         httpBackend = new HttpBackend(browser);
         httpBackend.when('GET', '/remote').respond(200, {
           msg: "You called /remote",
-        }, {'test-header': 'remote success'});
+        }, {
+          'test-header': 'remote success'
+        });
 
         element(by.id('method')).sendKeys('GET');
         element(by.id('url')).sendKeys('remote');
@@ -53,23 +55,17 @@ describe('Remote configuration behavior', function(){
     });
 
     it('should result in a response status of 200', function() {
-
       expect(element(by.id('r-status')).getText()).toEqual('200');
-
     });
 
     it('should result in the mocked response body being displayed', function() {
-
       expect(element(by.id('r-data')).getText())
         .toEqual('{"msg":"You called /remote"}');
-
     });
 
     it('should result in the mocked response headers being displayed', function() {
-
       expect(element(by.id('r-headers')).getText())
         .toEqual('{"test-header":"remote success"}');
-
     });
 
   });
@@ -82,7 +78,7 @@ describe('Remote configuration behavior', function(){
 
     beforeEach(function() {
 
-      if(firstRun){
+      if (firstRun) {
         firstRun = false;
 
         browser.get('index.html');
@@ -99,23 +95,17 @@ describe('Remote configuration behavior', function(){
     });
 
     it('should result in a response status of 404', function() {
-
       expect(element(by.id('r-status')).getText()).toEqual('404');
-
     });
 
     it('should result in the mocked response body being displayed', function() {
-
       expect(element(by.id('r-data')).getText())
         .toEqual('"Not Found."');
-
     });
 
     it('should result in the mocked response headers being displayed', function() {
-
       expect(element(by.id('r-headers')).getText())
         .toEqual('{}');
-
     });
 
   });
@@ -127,7 +117,7 @@ describe('Remote configuration behavior', function(){
 
     beforeEach(function() {
 
-      if(firstRun){
+      if (firstRun) {
         firstRun = false;
 
         browser.get('index.html');
@@ -135,11 +125,12 @@ describe('Remote configuration behavior', function(){
         httpBackend = new HttpBackend(browser);
 
         var urlSelector = urlSelectorFunctionsSupported
-          ? function(url){return url.indexOf('/func') == 0;}
+          ? function(url) { return url.indexOf('/func') == 0; }
           : '/func-test';
 
-        httpBackend.when('GET', urlSelector)
-          .respond(function(method, url){return [200, 'You called: ' + url];});
+        httpBackend
+          .when('GET', urlSelector)
+          .respond(function(method, url) { return [200, 'You called: ' + url]; });
 
         element(by.id('method')).sendKeys('GET');
         element(by.id('url')).sendKeys('func-test');
@@ -150,16 +141,12 @@ describe('Remote configuration behavior', function(){
     });
 
     it('should result in a response status of 200', function() {
-
       expect(element(by.id('r-status')).getText()).toEqual('200');
-
     });
 
     it('should result in the computed response body being displayed', function() {
-
       expect(element(by.id('r-data')).getText())
         .toEqual('"You called: /func-test"');
-
     });
 
   });
@@ -171,15 +158,16 @@ describe('Remote configuration behavior', function(){
 
     beforeEach(function() {
 
-      if(firstRun){
+      if (firstRun) {
         firstRun = false;
 
         browser.get('index.html');
 
         httpBackend = new HttpBackend(browser);
 
-        httpBackend.when('GET', /regexp/i)
-          .respond(function(method, url){return [200, 'You called: ' + url];});
+        httpBackend
+          .when('GET', /regexp/i)
+          .respond(function(method, url) { return [200, 'You called: ' + url]; });
 
         element(by.id('method')).sendKeys('GET');
         element(by.id('url')).sendKeys('get-RegExp');
@@ -190,16 +178,12 @@ describe('Remote configuration behavior', function(){
     });
 
     it('should result in a response status of 200', function() {
-
       expect(element(by.id('r-status')).getText()).toEqual('200');
-
     });
 
     it('should result in the computed response body being displayed', function() {
-
       expect(element(by.id('r-data')).getText())
         .toEqual('"You called: /get-RegExp"');
-
     });
 
   });

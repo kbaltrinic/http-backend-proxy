@@ -5,7 +5,7 @@
  */
 'use strict';
 
-var Proxy = function(browser, options){
+var Proxy = function(browser, options) {
 
   var DEFAULT_CONTEXT_FIELD_NAME = 'context';
 
@@ -13,7 +13,7 @@ var Proxy = function(browser, options){
   options.buffer || (options.buffer = false);
 
   //This is for backward compatibility since we changed the API from 1.1.1 to 1.2
-  if(options.contextField === false){
+  if (options.contextField === false) {
     console.warn("Setting contextField: false is deprected.  Set contextAutoSync: false instead.");
     options.contextAutoSync = false;
   }
@@ -113,11 +113,11 @@ var Proxy = function(browser, options){
 
       } else {
 
-        if(typeof(proxy[options.contextField]) === 'undefined'){
+        if (typeof(proxy[options.contextField]) === 'undefined') {
           proxy[options.contextField] = {};
         }
 
-        context =  proxy[options.contextField];
+        context = proxy[options.contextField];
       }
 
       return browser.executeScript(
@@ -126,11 +126,14 @@ var Proxy = function(browser, options){
     }
 
     var onLoad;
-    this.__defineGetter__("onLoad", function(){
+    this.__defineGetter__("onLoad", function() {
 
-      if(onLoad) return onLoad;
+      if (onLoad) return onLoad;
 
-      var _options_ = { buffer: true, contextField: options.contextField };
+      var _options_ = {
+        buffer: true,
+        contextField: options.contextField
+      };
       return onLoad = new Proxy(browser, _options_, proxy);
 
     });
@@ -139,18 +142,20 @@ var Proxy = function(browser, options){
 
     var parent = arguments[2];
 
-    var buildModuleScript = function (){
+    var buildModuleScript = function() {
       var script = getContextDefinitionScript(parent[options.contextField]) + buffer.join('\n');
       return 'angular.module("http-backend-proxy", ["ngMockE2E"]).run(["$httpBackend", function($httpBackend){' +
         script.replace(/window\.\$httpBackend/g, '$httpBackend') + '}]);'
     }
 
-    wrapBrowserGet = function(){
+    wrapBrowserGet = function() {
       var get = browser.get;
-      browser.get = function(){
+      browser.get = function() {
 
-        if(buffer.length > 0){
-          if(browser.get.addedOnce && browser.removeMockModule){ browser.removeMockModule('http-backend-proxy') };
+        if (buffer.length > 0) {
+          if (browser.get.addedOnce && browser.removeMockModule) {
+            browser.removeMockModule('http-backend-proxy')
+          };
           browser.addMockModule('http-backend-proxy', buildModuleScript());
           //addedOnce is a workaround for Protractor issue #764
           browser.get.addedOnce = true;
@@ -165,65 +170,67 @@ var Proxy = function(browser, options){
 
     this.reset = function() {
       buffer = [];
-      if(browser.get.__super__){
-        if(browser.get.addedOnce && browser.removeMockModule){ browser.removeMockModule('http-backend-proxy') };
+      if (browser.get.__super__) {
+        if (browser.get.addedOnce && browser.removeMockModule) {
+          browser.removeMockModule('http-backend-proxy')
+        };
         browser.get = browser.get.__super__;
       }
     };
 
   }
 
-  function stringifyArgs(args){
+  function stringifyArgs(args) {
     var i, s = [];
-    for(i = 0; i < args.length; i++){
+    for (i = 0; i < args.length; i++) {
       s.push(stringifyObject(args[i]));
     }
     return s.join(', ');
   }
 
-  function getContextDefinitionScript(context){
+  function getContextDefinitionScript(context) {
 
-    if(options.contextAutoSync){
+    if (options.contextAutoSync) {
       context = context || proxy[options.contextField];
     }
 
-    if(typeof(context) !== 'undefined'){
+    if (typeof(context) !== 'undefined') {
       return '$httpBackend.' + options.contextField + '=' + stringifyObject(context) + ';';
     } else {
       return '';
     }
   }
 
-  function stringifyObject(obj){
+  function stringifyObject(obj) {
 
-    if(obj === null)
+    if (obj === null)
       return 'null';
 
-    if(typeof obj === 'function')
+    if (typeof obj === 'function')
       return obj.toString();
 
-    if(obj instanceof Date)
+    if (obj instanceof Date)
       return 'new Date(' + obj.valueOf() + ')';
 
-    if(obj instanceof RegExp){
+    if (obj instanceof RegExp) {
 
       var regexToString = obj.toString();
       var regexEndIndex = regexToString.lastIndexOf("/");
       var expression = JSON.stringify(regexToString.slice(1, regexEndIndex));
       var modifiers = regexToString.substring(regexEndIndex + 1);
-      if(modifiers.length > 0) modifiers = "," + JSON.stringify(modifiers);
+      if (modifiers.length > 0) modifiers = "," + JSON.stringify(modifiers);
 
       return 'new RegExp(' + expression + modifiers + ')';
     }
 
-    if(obj instanceof Array){
+    if (obj instanceof Array) {
       var elements = []
-      obj.forEach(function(element){
+      obj.forEach(function(element) {
         elements.push(stringifyObject(element));
       });
       return '[' + elements.join(',') + ']';
 
-    } else if(typeof(obj) === 'object'){
+    } else if (typeof(obj) === 'object') {
 
       var fields = [];
       for (var key in obj) {

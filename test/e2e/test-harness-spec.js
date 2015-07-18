@@ -13,7 +13,7 @@ describe('Default ngMockE2E Behavior', function() {
 
     beforeEach(function() {
 
-      if(firstRun){
+      if (firstRun) {
         firstRun = false;
 
         browser.get('index.html');
@@ -26,23 +26,17 @@ describe('Default ngMockE2E Behavior', function() {
     });
 
     it('should result in a response status of 200', function() {
-
       expect(element(by.id('r-status')).getText()).toEqual('200');
-
     });
 
     it('should result in the mocked response body being displayed', function() {
-
       expect(element(by.id('r-data')).getText())
         .toEqual('{"msg":"You called /test","args":null}');
-
     });
 
     it('should result in the mocked response headers being displayed', function() {
-
       expect(element(by.id('r-headers')).getText())
         .toEqual('{"test-header":"success"}');
-
     });
 
   });
@@ -53,7 +47,7 @@ describe('Default ngMockE2E Behavior', function() {
 
     beforeEach(function() {
 
-      if(firstRun){
+      if (firstRun) {
         firstRun = false;
 
         browser.get('index.html');
@@ -67,23 +61,17 @@ describe('Default ngMockE2E Behavior', function() {
     });
 
     it('should result in a response status of 404', function() {
-
       expect(element(by.id('r-status')).getText()).toEqual('404');
-
     });
 
     it('should result in the mocked response body being displayed', function() {
-
       expect(element(by.id('r-data')).getText())
         .toEqual('"You called /missing"');
-
     });
 
     it('should result in the mocked response headers being displayed', function() {
-
       expect(element(by.id('r-headers')).getText())
         .toEqual('{"test-header":"failed"}');
-
     });
 
   });
