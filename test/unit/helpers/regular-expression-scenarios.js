@@ -21,7 +21,7 @@ module.exports = [
         desc  : 'litterals with forward slashes'
     }, {
         regex : new RegExp('/a/path'),
-        output: 'new RegExp("/a/path")',
+        output: 'new RegExp("\\\\/a\\\\/path")',
         desc  : 'constructors with forward slashes'
     }, {
         regex : /'quoted'/,
